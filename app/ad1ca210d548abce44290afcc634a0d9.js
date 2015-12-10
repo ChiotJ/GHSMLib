@@ -31,8 +31,9 @@
     })();
 
 
-    function GHWebSocket() {
+    function GHWebSocket(actions) {
         this.wsUrl = "";
+        this.actions = typeof actions == "object" ? actions : {};
         this.client = null;
         this._init();
     }
@@ -68,12 +69,21 @@
             this.connect();
         },
         _subscribe: function () {
-            this.client.subscribe('/user/topic/enter', function (data) {
+            var self = this;
+            this.client.subscribe('', function (data) {
                 console.log('进入调用:', data);
+                var _actions = data.actions;
+                var _props = data.props;
+                if (self.actions[_actions]) {
+                    self.actions[_actions]();
+                }
             });
         },
         onClose: function () {
             console.debug('WebSocket已退出');
+        },
+        setActions: function (options) {
+            this.actions = options;
         }
 
     };
@@ -81,18 +91,19 @@
 
     function _GeHuaShuMeiLib() {
         this.options = {};
+        this.actions = {};
         this._initScript();
     }
 
     _GeHuaShuMeiLib.prototype = {
         version: '1.0.0',
-        bus_name: '电视图书馆',
-        bus_id: '',
+        bus_name: '电视网络图书馆',
+        bus_id: 'ad1ca210d548abce44290afcc634a0d9',
         _init: function () {
-            this.WS = new GHWebSocket()
+            this.WS = new GHWebSocket(this.actions);
         },
         _initScript: function () {
-            var loadJsNum = 0, jsTotal = 2, loadTimeOut = 5000, libURL = "http://localhost:63342/library/js/";
+            var loadJsNum = 0, jsTotal = 2, loadTimeOut = 5000, libURL = "http://localhost/ws/GHSMLib/lib/";
             var self = this;
             var loadJs = function () {
                 loadJsNum++;
@@ -121,10 +132,22 @@
             }, loadTimeOut);
 
         },
-        loadOptions: function (options) {
+        setOptions: function (options) {
             for (var i in options) {
                 this.options[i] = options[i];
             }
+        },
+        setLinkage: function (options) {
+            if (typeof options == "object") {
+                if (this.WS) {
+                    this.WS.actions = options;
+                } else {
+                    this.actions = options;
+                }
+            } else {
+                console.error("options is not Object ")
+            }
+
         }
     };
 
@@ -134,3 +157,10 @@
     window.GHSMLib = GeHuaShuMeiLib;
 
 })(window, document, Math);
+
+
+GHSMLib.setLinkage({
+    goToPage: function () {
+        console.log()
+    }
+});
