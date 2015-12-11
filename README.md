@@ -1,9 +1,10 @@
 #歌华数媒电视应用库
     version:1.0.0
+    现有业务：[电视网络图书馆][1]
 ##电视网络图书馆：
 
 ###联动参数
-    1.跳转到相应业务(全局)
+    [1]1.跳转到相应业务(全局)
         阅读图书：{"actions":"goTo","props":{"service":"readBook","bookId":"","pageNo":"","isZoom":"","zoomRate":"","center":""}}
         观看视频：{"actions":"goTo","props":{"service":"playVideo","videoId":"","timeTo":""}}
     2.图书操作(阅读图书图书)
