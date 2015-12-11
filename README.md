@@ -16,7 +16,11 @@
         GHSMLib.addActions({
             goTo: function (props) {
                 //TODO 
-            }
+            }，
+            bookCon：function (props) {
+                //TODO
+            },
+            ...
         });
         
     `goTo`动作
@@ -58,7 +62,7 @@
 		观看视频：
 		{"actions":"goTo","props":{"service":"playVideo","videoId":"","timeTo":""}}
     
-- 图书操作(阅读图书图书)
+- 图书操作(阅读图书)
 
 		上一页：
 		{"actions":"bookCon","props":{"service":"pageUp","bookId":"","pageNoTo":""}}
