@@ -7,9 +7,7 @@
     var utils = (function () {
         var me = {};
 
-        me.getTime = Date.now || function getTime() {
-                return new Date().getTime();
-            };
+        me.getTime = Date.now || new Date().getTime();
 
         me.extend = function (target, obj) {
             for (var i in obj) {
@@ -27,6 +25,10 @@
                 oScript.onload = callbackfunction;
                 oHead.appendChild(oScript);
             }
+        };
+
+        me.qrCode = function (text, size) {
+            return "http://172.16.188.13/api/common/Image/qrCode.png?text=" + text + "&size=" + size;
         };
         return me;
     })();
@@ -48,7 +50,7 @@
             this.client = Stomp.over(sock);
 
             this.client.debug = function (msg) {
-                console.debug(msg)
+                //console.debug(msg)
             };
 
             this.client.connect({}, function () {
@@ -80,7 +82,7 @@
             });
         },
         onClose: function () {
-            console.debug('WebSocket已退出');
+            //console.debug('WebSocket已退出');
         },
         addActions: function (_actions) {
             if (typeof _actions === "object") {

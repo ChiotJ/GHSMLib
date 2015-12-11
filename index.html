@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="GHSMLib-1.0.0.js" type="application/javascript"></script>
-    <script>
-        GHSMLib.addActions({
-            goTo: function (props) {
-            }
-        });
-        GHSMLib.addActions();
-
-    </script>
 </head>
 <body>
+<img id="qrCode" src=""/>
+<script>
+    GHSMLib.addActions({
+        goTo: function (props) {
+        }
+    });
 
+    var qc = GHSMLib.utils.qrCode("https://www.baidu.com", 500);
+    document.getElementById("qrCode").src = qc;
+
+</script>
 </body>
 </html>
