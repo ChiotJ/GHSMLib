@@ -13,7 +13,8 @@
 
         me.extend = function (target, obj) {
             for (var i in obj) {
-                target[i] = obj[i];
+                if (obj.hasOwnProperty(i))
+                    target[i] = obj[i];
             }
         };
 
@@ -31,11 +32,10 @@
     })();
 
 
-    function GHWebSocket(actions) {
+    function GHWebSocket() {
         this.wsUrl = "";
-        this.actions = typeof actions == "object" ? actions : {};
+        this.actions = {};
         this.client = null;
-        this._init();
     }
 
     GHWebSocket.prototype = {
@@ -74,33 +74,35 @@
                 console.log('进入调用:', data);
                 var _actions = data.actions;
                 var _props = data.props;
-                if (self.actions[_actions]) {
-                    self.actions[_actions]();
+                if (self.actions[_actions] && typeof self.actions[_actions] === "function") {
+                    self.actions[_actions](_props);
                 }
             });
         },
         onClose: function () {
             console.debug('WebSocket已退出');
         },
-        setActions: function (options) {
-            this.actions = options;
+        addActions: function (_actions) {
+            if (typeof _actions === "object") {
+                utils.extend(this.actions, _actions);
+                return true;
+            } else {
+                return false;
+            }
         }
 
     };
 
 
     function _GeHuaShuMeiLib() {
-        this.options = {};
-        this.actions = {};
+        this._WS = new GHWebSocket();
         this._initScript();
     }
 
     _GeHuaShuMeiLib.prototype = {
         version: '1.0.0',
-        bus_name: '电视网络图书馆',
-        bus_id: 'ad1ca210d548abce44290afcc634a0d9',
         _init: function () {
-            this.WS = new GHWebSocket(this.actions);
+            this._WS._init();
         },
         _initScript: function () {
             var loadJsNum = 0, jsTotal = 2, loadTimeOut = 5000, libURL = "http://localhost/ws/GHSMLib/lib/";
@@ -132,22 +134,14 @@
             }, loadTimeOut);
 
         },
-        setOptions: function (options) {
-            for (var i in options) {
-                this.options[i] = options[i];
-            }
-        },
-        setLinkage: function (options) {
-            if (typeof options == "object") {
-                if (this.WS) {
-                    this.WS.actions = options;
-                } else {
-                    this.actions = options;
+        addActions: function (actions) {
+            var r = false;
+            if (typeof actions === "object") {
+                if (this._WS) {
+                    r = this._WS.addActions(actions);
                 }
-            } else {
-                console.error("options is not Object ")
             }
-
+            return r;
         }
     };
 
@@ -157,10 +151,3 @@
     window.GHSMLib = GeHuaShuMeiLib;
 
 })(window, document, Math);
-
-
-GHSMLib.setLinkage({
-    goToPage: function () {
-        console.log()
-    }
-});
