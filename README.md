@@ -57,24 +57,24 @@
 - 跳转到相应业务(全局)
        
     	阅读图书：
-		{"actions":"goTo","props":{"service":"readBook","bookId":"","pageNo":"","isZoom":"","zoomRate":"","center":""}}
+		{"actions":"goTo","props":{"service":"readBook","bookId":"","pageNo":"","isZoom":"","zoomRate":"","center":{"x":"","y":""}}}
 
 		观看视频：
-		{"actions":"goTo","props":{"service":"playVideo","videoId":"","timeTo":""}}
+		{"actions":"goTo","props":{"service":"playVideo","videoId":"","time":""}}
     
 - 图书操作(阅读图书)
 
 		上一页：
-		{"actions":"bookCon","props":{"service":"pageUp","bookId":"","pageNoTo":""}}
+		{"actions":"bookCon","props":{"service":"pageUp","bookId":"","pageNo":""}}
 
 	    下一页：
-		{"actions":"bookCon","props":{"service":"pageDown","bookId":"","pageNoTo":""}}
+		{"actions":"bookCon","props":{"service":"pageDown","bookId":"","pageNo":""}}
 
 	    放大缩小：
-		{"actions":"bookCon","props":{"service":"zoom","bookId":"","pageNo":"","zoomRate":"","center":""}}
+		{"actions":"bookCon","props":{"service":"zoom","bookId":"","pageNo":"","zoomRate":"","center":{"x":"","y":""}}}
 
 	    跳转到某一页：
-		{"actions":"bookCon","props":{"service":"pageTo","bookId":"","pageNoTo":""}}
+		{"actions":"bookCon","props":{"service":"pageTo","bookId":"","pageNo":""}}
     
 - 视频操作（观看视频）
 
