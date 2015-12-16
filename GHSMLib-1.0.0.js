@@ -66,18 +66,29 @@
             this.client = null;
         },
         _verifyWS: function () {
-            this.wsUrl = "http://10.191.255.121:18080/tvapi?token=1372322871";
-            this.wsUrl = "http://10.0.194.15:8080/tvapi?token=1372322871";
-            this.connect();
+            var key = $("#GHSMLib").attr("key");
+            var tvCode = "1372322871";
+            if (key === "f704916f62ea87b11c11ad0bfeadb25f") {
+                this.wsUrl = "http://10.191.255.121:7180/tvlibrary/tv/api/ws?tvCode=" + tvCode;
+            }
+
+            if (this.wsUrl != "") {
+                this.connect();
+            } else {
+                console.error("错误的key")
+            }
+
+
         },
         _subscribe: function () {
             var self = this;
-            this.client.subscribe('', function (data) {
+            this.client.subscribe('/user/actions', function (data) {
                 console.log('进入调用:', data);
-                var _actions = data.actions;
-                var _props = data.props;
-                if (self.actions[_actions] && typeof self.actions[_actions] === "function") {
-                    self.actions[_actions](_props);
+                var body = eval("[" + data.body + "]")[0];
+                var _action = body.action;
+                var _props = body.props;
+                if (self.actions[_action] && typeof self.actions[_action] === "function") {
+                    self.actions[_action](_props, body.openId);
                 }
             });
         },
