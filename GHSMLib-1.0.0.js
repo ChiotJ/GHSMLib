@@ -83,7 +83,7 @@
         _subscribe: function () {
             var self = this;
             this.client.subscribe('/user/actions', function (data) {
-                console.log('进入调用:', data);
+                //console.log('进入调用:', data);
                 var body = eval("[" + data.body + "]")[0];
                 var _action = body.action;
                 var _props = body.props;
@@ -107,12 +107,12 @@
     };
 
 
-    function _GeHuaShuMeiLib() {
+    function GeHuaShuMeiLib() {
         this._WS = new GHWebSocket();
         this._initScript();
     }
 
-    _GeHuaShuMeiLib.prototype = {
+    GeHuaShuMeiLib.prototype = {
         version: '1.0.0',
         _init: function () {
             this._WS._init();
@@ -158,9 +158,6 @@
         }
     };
 
-    var GeHuaShuMeiLib = new _GeHuaShuMeiLib();
-    GeHuaShuMeiLib.utils = utils;
-
-    window.GHSMLib = GeHuaShuMeiLib;
-
+    window.GHSMLib = new GeHuaShuMeiLib();
+    window.GHSMLib.utils = utils;
 })(window, document, Math);
