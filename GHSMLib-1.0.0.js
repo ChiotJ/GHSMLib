@@ -4,19 +4,15 @@
 'use strict';
 !function (window, document) {
     var $ = null, selfURL = "http://localhost/ws/GHSMLib";
-
     var utils = (function () {
         var me = {};
-
         me.getTime = Date.now || new Date().getTime();
-
         me.extend = function (target, obj) {
             for (var i in obj) {
                 if (obj.hasOwnProperty(i))
                     target[i] = obj[i];
             }
         };
-
         me.loadScript = function (sScriptSrc, callbackfunction) {
             var oHead = document.getElementsByTagName('head')[0];
             if (oHead) {
@@ -27,13 +23,11 @@
                 oHead.appendChild(oScript);
             }
         };
-
         me.qrCode = function (text, size) {
             return "http://172.16.188.13/api/common/Image/qrCode.png?text=" + text + "&size=" + size;
         };
         return me;
     })();
-
 
     function GHWebSocket() {
         this.wsUrl = "";
@@ -51,11 +45,9 @@
             this.client.debug = function (msg) {
                 //console.debug(msg)
             };
-
             this.client.connect({}, function () {
                 self._subscribe();
             }, this.onClose);
-
             window.onbeforeunload = function () {
                 self.disconnect();
             };
@@ -98,10 +90,7 @@
                 return false;
             }
         }
-
     };
-
-
     function GeHuaShuMeiLib() {
         this._WS = new GHWebSocket();
         this._initScript();
@@ -121,7 +110,6 @@
                     self._init();
                 }
             };
-
             if (!window.jQuery || (window.jQuery && window.jQuery().jquery.substring(0, 3) < 1.9)) {
                 jsTotal++;
                 utils.loadScript(libURL + "jquery-2.1.3.min.js", function () {
@@ -131,16 +119,13 @@
             } else {
                 $ = window.jQuery;
             }
-
             utils.loadScript(libURL + "sockjs-1.0.0.min.js", loadJs);
             utils.loadScript(libURL + "stomp.min.js", loadJs);
-
             setTimeout(function () {
                 if (loadJsNum != jsTotal) {
                     console.error("js文件加载超时")
                 }
             }, loadTimeOut);
-
         },
         addActions: function (actions) {
             var r = false;
