@@ -1,8 +1,9 @@
 /**
  * Created by jian_ on 2015/12/8.
  */
-(function (window, document, Math) {
-    var $ = null;
+'use strict';
+!function (window, document) {
+    var $ = null, selfURL = "http://localhost/ws/GHSMLib";
 
     var utils = (function () {
         var me = {};
@@ -45,10 +46,8 @@
             this._verifyWS();
         },
         connect: function () {
-            var self = this;
-            var sock = new SockJS(this.wsUrl);
+            var self = this, tvCode = "1372322871", sock = new SockJS(this.wsUrl + tvCode);
             this.client = Stomp.over(sock);
-
             this.client.debug = function (msg) {
                 //console.debug(msg)
             };
@@ -66,25 +65,21 @@
             this.client = null;
         },
         _verifyWS: function () {
-            var key = $("#GHSMLib").attr("key");
-            var tvCode = "1372322871";
-            if (key === "f704916f62ea87b11c11ad0bfeadb25f") {
-                this.wsUrl = "http://10.191.255.121:7180/tvlibrary/tv/api/ws?tvCode=" + tvCode;
-            }
-
-            if (this.wsUrl != "") {
-                this.connect();
-            } else {
-                console.error("错误的key")
-            }
-
-
+            var self = this, key = $("#GHSMLib").attr("key");
+            $.getJSON(selfURL + '/json/' + key + '.json', function (data) {
+                self.wsUrl = data.ws;
+                if (this.wsUrl != "") {
+                    self.connect();
+                } else {
+                    console.error("错误的ws")
+                }
+            });
         },
         _subscribe: function () {
             var self = this;
             this.client.subscribe('/user/actions', function (data) {
                 //console.log('进入调用:', data);
-                var body = eval("[" + data.body + "]")[0];
+                var body = JSON.parse(data.body);
                 var _action = body.action;
                 var _props = body.props;
                 if (self.actions[_action] && typeof self.actions[_action] === "function") {
@@ -118,7 +113,7 @@
             this._WS._init();
         },
         _initScript: function () {
-            var loadJsNum = 0, jsTotal = 2, loadTimeOut = 5000, libURL = "http://localhost/ws/GHSMLib/lib/";
+            var loadJsNum = 0, jsTotal = 2, loadTimeOut = 5000, libURL = selfURL + "/lib/";
             var self = this;
             var loadJs = function () {
                 loadJsNum++;
@@ -160,4 +155,4 @@
 
     window.GHSMLib = new GeHuaShuMeiLib();
     window.GHSMLib.utils = utils;
-})(window, document, Math);
+}(window, document);
