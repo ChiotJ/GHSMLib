@@ -3,7 +3,7 @@
  */
 'use strict';
 !function (window, document) {
-    var $ = null, selfURL = "http://localhost/ws/GHSMLib";
+    var $ = null, selfURL = "http://172.16.200.74/web/GHSMLib";
     var utils = (function () {
         var me = {};
         me.getTime = Date.now || new Date().getTime();
@@ -29,10 +29,11 @@
         return me;
     })();
 
-    function GHWebSocket() {
+    function GHWebSocket(_tvCode) {
         this.wsUrl = "";
         this.actions = {};
         this.client = null;
+        this.tvCode = _tvCode;
     }
 
     GHWebSocket.prototype = {
@@ -40,7 +41,7 @@
             this._verifyWS();
         },
         connect: function () {
-            var self = this, tvCode = "1372322871", sock = new SockJS(this.wsUrl + tvCode);
+            var self = this, sock = new SockJS(this.wsUrl + this.tvCode);
             this.client = Stomp.over(sock);
             this.client.debug = function (msg) {
                 //console.debug(msg)
@@ -98,8 +99,12 @@
 
     GeHuaShuMeiLib.prototype = {
         version: '1.0.0',
+        tvCode: '',
         _init: function () {
-            this._WS._init();
+            if (typeof CyberCloud != "undefined") {
+                this.tvCode = CyberCloud.GetParam("CardID").ParamValue;
+                this._WS._init(this.tvCode);
+            }
         },
         _initScript: function () {
             var loadJsNum = 0, jsTotal = 2, loadTimeOut = 5000, libURL = selfURL + "/lib/";

@@ -8,17 +8,18 @@
 </head>
 <body>
 <img id="qrCode" src=""/>
+<div id="goTo">
+
+</div>
 <script>
     GHSMLib.addActions({
         goTo: function (props, user) {
-            console.log(props);
-            console.log(user);
+            document.getElementById("geTo").innerHTML = "user:" + user + ";props:" + props;
         }
     });
 
     var qc = GHSMLib.utils.qrCode("https://www.baidu.com", 500);
     document.getElementById("qrCode").src = qc;
-
 </script>
 </body>
 </html>
