@@ -68,29 +68,64 @@
        
     阅读图书：
     ```json
-    {"openId" : "","tv" : "","action":"goTo","props":{"service":"readBook","bookId":"","pageNo":"","zoomRate":"","center":{"x":"","y":""}}}
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"readBook","ssid":"","dxid":"","bookName":"","size":"","pageNum":""}}
     ```
     观看视频：
     ```json
-    {"openId" : "","tv" : "","action":"goTo","props":{"service":"playVideo","videoId":"","time":""}}
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"playVideo","vodId":"","bookName":"","pageNum":"","time":""}}
+    ```
+    图书中心：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"bookCenter","clazzFlag":"","type":""}}
+    ```
+    ```json
+    参数注释：{"clazzFlag":"分类名称","type" : {"1":"图书","2":"视频"}}
+    ```
+    借阅中心：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"borrow"}}
+    ```
+    排行中心：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"ranking","type":""}}
+    ```
+    ```json
+    参数注释：{"clazzFlag":"分类名称","type" : {"1":"图书","2":"视频"}}
+    ```
+    我的书架：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"bookcase","type":""}}
+    ```
+    ```json
+    参数注释：{"clazzFlag":"分类名称","type" : {"1":"图书","2":"视频"}}
+    ```
+    搜索中心：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"search","search":"","type":""}}
+    ```
+    ```json
+    参数注释：{"search":"搜索内容","type" : {"1":"图书","2":"知识","3":"视频"}}
     ```    
 - 图书操作(阅读图书)
 
     上一页：
     ```json
-    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"pageUp","bookId":"","pageNo":""}}
+    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"pageUp"}}
     ```
     下一页：
     ```json
-    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"pageDown","bookId":"","pageNo":""}}
+    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"pageDown"}}
     ```		
     放大缩小：
     ```json
     {"openId" : "","tv" : "","action":"bookCon","props":{"service":"zoom","bookId":"","pageNo":"","zoomRate":"","center":{"x":"","y":""}}}
+    ```
+    ```json
+    参数注释：{"zoomRate":"放大缩小比例，例：1.5","center" : {"x":"横向偏移量","y":"纵向偏移量"}}
     ```		
     跳转到某一页：
 	```json
-    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"pageTo","bookId":"","pageNo":""}}
+    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"pageTo","pageNum":""}}
     ```	
 - 视频操作（观看视频）
 

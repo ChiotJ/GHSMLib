@@ -1,5 +1,6 @@
 /**
- * Created by jian_ on 2015/12/8.
+ * version:1.0.0.2313
+ * Created by jianyingshuo on 2015/12/27.
  */
 'use strict';
 !function (window, document) {
@@ -29,15 +30,15 @@
         return me;
     })();
 
-    function GHWebSocket(_tvCode) {
+    function GHWebSocket() {
         this.wsUrl = "";
         this.actions = {};
         this.client = null;
-        this.tvCode = _tvCode;
     }
 
     GHWebSocket.prototype = {
-        _init: function () {
+        _init: function (_tvCode) {
+            this.tvCode = _tvCode;
             this._verifyWS();
         },
         connect: function () {
