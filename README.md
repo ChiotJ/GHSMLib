@@ -72,14 +72,17 @@
     ```
     观看视频：
     ```json
-    {"openId" : "","tv" : "","action":"goTo","props":{"service":"playVideo","vodId":"","bookName":"","pageNum":"","time":""}}
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"playVideo","vodId":"","bookName":"","playNum":""}}
+    ```
+    ```json
+    参数注释：{"playNum":"播放第几个视频，从1开始计数"}
     ```
     图书中心：
     ```json
-    {"openId" : "","tv" : "","action":"goTo","props":{"service":"bookCenter","clazzFlag":"","type":""}}
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"bookCenter","clazzFlag":"","type":"","onelevelId":""}}
     ```
     ```json
-    参数注释：{"clazzFlag":"分类名称","type" : {"1":"图书","2":"视频"}}
+    参数注释：{"clazzFlag":"分类名称","type" : {"0":"图书","1":"视频"},"onelevelId":"视频分类填写此值，例：10000"}
     ```
     借阅中心：
     ```json
@@ -90,14 +93,14 @@
     {"openId" : "","tv" : "","action":"goTo","props":{"service":"ranking","type":""}}
     ```
     ```json
-    参数注释：{"clazzFlag":"分类名称","type" : {"1":"图书","2":"视频"}}
+    参数注释：{"type" : {"0":"图书","1":"视频"}}
     ```
     我的书架：
     ```json
     {"openId" : "","tv" : "","action":"goTo","props":{"service":"bookcase","type":""}}
     ```
     ```json
-    参数注释：{"clazzFlag":"分类名称","type" : {"1":"图书","2":"视频"}}
+    参数注释：{"type" : {"0":"图书","1":"视频"}}
     ```
     搜索中心：
     ```json
@@ -105,7 +108,15 @@
     ```
     ```json
     参数注释：{"search":"搜索内容","type" : {"1":"图书","2":"知识","3":"视频"}}
-    ```    
+    ```
+    返回：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"backSpace"}}
+    ```
+    退出：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"exit"}}
+    ```
 - 图书操作(阅读图书)
 
     上一页：
@@ -131,11 +142,14 @@
 
     播放：
     ```json
-    {"openId" : "","tv" : "","action":"videoCon","props":{"service":"play","videoId":""}}
-    ```		
+    {"openId" : "","tv" : "","action":"videoCon","props":{"service":"play","time":""}}
+    ```
+    ```json
+    参数注释：{"time":"播放时间，如果为-1或不填则继续播放，如果填写则跳到对应时间，单位为秒"}
+    ```
     暂停：
     ```json
-    {"openId" : "","tv" : "","action":"videoCon","props":{"service":"pause","videoId":""}}
+    {"openId" : "","tv" : "","action":"videoCon","props":{"service":"pause"}}
     ```
 
 

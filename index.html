@@ -3,14 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script id="GHSMLib" src="GHSMLib-1.0.0.min.js" key="f704916f62ea87b11c11ad0bfeadb25f"
-            type="application/javascript"></script>
 </head>
 <body>
 <img id="qrCode" src=""/>
 <div id="goTo">
 
 </div>
+
+<ul id="aaa" tabindex="-1">
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+    <li>5</li>
+</ul>
+<script>
+
+    var CyberCloud = {
+        GetParam: function () {
+            return {
+                ParamValue: "1372322871"
+            }
+        }
+    }
+</script>
+<script src="lib/jquery-2.1.3.min.js"></script>
+<script id="GHSMLib" src="GHSMLib-1.0.0.js" key="f704916f62ea87b11c11ad0bfeadb25f"
+        type="application/javascript"></script>
+
 <script>
     GHSMLib.addActions({
         goTo: function (props, user) {
@@ -20,6 +40,26 @@
 
     var qc = GHSMLib.utils.qrCode("https://www.baidu.com", 500);
     document.getElementById("qrCode").src = qc;
+
+
+    GHSMLib.keyCon.listKeyListener({
+        id: "aaa",
+        columnNum: 2,
+        label: "li",
+        up: {
+            before: function (item) {
+                console.log(item);
+                console.log("up");
+            }
+        },
+        focus: function (item) {
+            console.log($(item).index());
+            console.log("focus");
+
+        }
+    });
+
+    $($("#aaa").find("li")[0]).attr("tabindex", "-1").focus();
 </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /**
- * version:1.0.0.2313
- * Created by jianyingshuo on 2015/12/27.
+ * version:1.0.0.12291618
+ * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
 !function (window, document) {
@@ -27,8 +27,208 @@
         me.qrCode = function (text, size) {
             return "http://172.16.188.13/api/common/Image/qrCode.png?text=" + text + "&size=" + size;
         };
+        me.getQueryString = function (name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return (r[2]);
+            return null;
+        };
         return me;
     })();
+
+
+    function KeyControl() {
+        this.index = {};
+        this.size = {};
+    }
+
+
+    KeyControl.prototype = {
+        _executeFun: function (fun, item) {
+            var order = ["before", "center", "after"];
+            var flag = true;
+            if (typeof fun === "function") {
+                flag = fun(item);
+                if (typeof flag === "undefined")
+                    flag = true;
+            } else if (typeof fun === "object") {
+                for (var key in order) {
+                    if (typeof fun[order[key]] === "function" && flag) {
+                        flag = fun[order[key]](item);
+                        if (typeof flag === "undefined")
+                            flag = true;
+                    }
+                }
+            }
+            return flag
+        },
+        /*普通按键监听*/
+        keyListener: function (options) {
+            var self = this, id = options.id, $id = $('#' + id), $item = $id;
+            document.getElementById(id).onkeydown = function (e) {
+                var item = e.target;
+                switch (e && e.keyCode) {
+                    case 8: //backspace
+                        return self._executeFun(options.back, item);
+                        break;
+                    case 13: //enter 键
+                        return self._executeFun(options.enter, item);
+                        break;
+                    case 27: //Esc
+                        return self._executeFun(options.esc, item);
+                        break;
+                    case 33: //pageUp
+                        return self._executeFun(options.pageUp, item);
+                        break;
+                    case 34: //pageDown
+                        return self._executeFun(options.pageDown, item);
+                        break;
+                    case 37: //左键
+                        return self._executeFun(options.left, item);
+                        break;
+                    case 38: //上键
+                        return self._executeFun(options.up, item);
+                        break;
+                    case 39: //右键
+                        return self._executeFun(options.right, item);
+                        break;
+                    case 40: //下键
+                        return self._executeFun(options.down, item);
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            if (options.label) {
+                $item = $id.find(options.label)
+            }
+
+            $item.focus(function () {
+                if (typeof options.focus === "function") {
+                    options.focus(this);
+                }
+            });
+
+            $item.blur(function () {
+                if (typeof options.blur === "function") {
+                    options.focus(this);
+                }
+            });
+
+            $item.click(function () {
+                $(this).attr("tabindex", "-1").focus();
+                if (typeof options.click === "function") {
+                    options.click(this);
+                }
+                if (typeof options.enter === "function") {
+                    options.enter(this);
+                }
+            });
+        },
+        /*列表按键监听*/
+        listKeyListener: function (options) {
+            var self = this, id = options.id, $idLi = $('#' + id).find(options.label), length = $idLi.length;
+            self.index[id] = 0;
+            self.size[id] = length;
+
+            if (typeof options.left !== "function") {
+                if (typeof options.left !== "object") {
+                    options.left = function (item) {
+                        var idx = $(item).index();
+                        $($idLi[--idx]).attr('tabindex', -1).focus();
+                    }
+                } else {
+                    if (typeof options.left.center !== "function") {
+                        options.left.center = function (item) {
+                            var idx = $(item).index();
+                            $($idLi[--idx]).attr('tabindex', -1).focus();
+                        }
+                    }
+                }
+            }
+
+            if (typeof options.up !== "function") {
+                if (typeof options.up !== "object") {
+                    options.up = function (item) {
+                        var idx = $(item).index();
+                        if (idx > options.columnNum - 1) {
+                            idx -= options.columnNum;
+                            $($idLi[idx]).attr('tabindex', -1).focus();
+                        }
+                    }
+                } else {
+                    if (typeof options.up.center !== "function") {
+                        options.up.center = function (item) {
+                            var idx = $(item).index();
+                            if (idx > options.columnNum - 1) {
+                                idx -= options.columnNum;
+                                $($idLi[idx]).attr('tabindex', -1).focus();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (typeof options.right !== "function") {
+                if (typeof options.right !== "object") {
+                    options.right = function (item) {
+                        var idx = $(item).index();
+                        if (idx < length - 1) {
+                            $($idLi[++idx]).attr('tabindex', -1).focus();
+                        }
+                    }
+                } else {
+                    if (typeof options.right.center !== "function") {
+                        options.right.center = function (item) {
+                            var idx = $(item).index();
+                            if (idx < length - 1) {
+                                $($idLi[++idx]).attr('tabindex', -1).focus();
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            if (typeof options.down !== "function") {
+                if (typeof options.down !== "object") {
+                    options.down = function (item) {
+                        var idx = $(item).index();
+                        if (idx < length - options.columnNum) {
+                            idx += options.columnNum;
+                            $($idLi[idx]).attr('tabindex', -1).focus();
+                        }
+                    }
+                } else {
+                    if (typeof options.down.center !== "function") {
+                        options.down.center = function (item) {
+                            var idx = $(item).index();
+                            if (idx < length - options.columnNum) {
+                                idx += options.columnNum;
+                                $($idLi[idx]).attr('tabindex', -1).focus();
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (typeof options.focus === "function") {
+                var a = options.focus;
+                options.focus = function (item) {
+                    self.index[id] = $(item).index();
+                    a(item);
+                }
+            } else {
+                options.focus = function (item) {
+                    self.index[id] = $(item).index();
+                }
+            }
+
+            self.keyListener(options);
+        }
+    };
 
     function GHWebSocket() {
         this.wsUrl = "";
@@ -60,14 +260,16 @@
         },
         _verifyWS: function () {
             var self = this, key = $("#GHSMLib").attr("key");
-            $.getJSON(selfURL + '/json/' + key + '.json', function (data) {
-                self.wsUrl = data.ws;
-                if (this.wsUrl != "") {
-                    self.connect();
-                } else {
-                    console.error("错误的ws")
-                }
-            });
+            if (key) {
+                $.getJSON(selfURL + '/json/' + key + '.json', function (data) {
+                    self.wsUrl = data.ws;
+                    if (this.wsUrl != "") {
+                        self.connect();
+                    } else {
+                        console.error("错误的ws")
+                    }
+                });
+            }
         },
         _subscribe: function () {
             var self = this;
@@ -146,4 +348,5 @@
 
     window.GHSMLib = new GeHuaShuMeiLib();
     window.GHSMLib.utils = utils;
+    window.GHSMLib.keyCon = new KeyControl();
 }(window, document);
