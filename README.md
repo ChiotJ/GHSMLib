@@ -129,7 +129,7 @@
     ```		
     放大缩小：
     ```json
-    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"zoom","bookId":"","pageNo":"","zoomRate":"","center":{"x":"","y":""}}}
+    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"zoom","zoomRate":"","center":{"x":"","y":""}}}
     ```
     ```json
     参数注释：{"zoomRate":"放大缩小比例，例：1.5","center" : {"x":"横向偏移量","y":"纵向偏移量"}}
