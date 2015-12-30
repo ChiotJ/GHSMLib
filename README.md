@@ -97,10 +97,10 @@
     ```
     我的书架：
     ```json
-    {"openId" : "","tv" : "","action":"goTo","props":{"service":"bookcase","type":""}}
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"bookcase","type":"","tvCode":""}}
     ```
     ```json
-    参数注释：{"type" : {"0":"图书","1":"视频"}}
+    参数注释：{"type" : {"0":"图书","1":"视频"},"tvCode":"机顶盒号"}
     ```
     搜索中心：
     ```json
