@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.12291618
+ * version:1.0.0.12311003
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -112,7 +112,7 @@
 
             $item.blur(function () {
                 if (typeof options.blur === "function") {
-                    options.focus(this);
+                    options.blur(this);
                 }
             });
 

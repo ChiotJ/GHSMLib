@@ -109,6 +109,10 @@
     ```json
     参数注释：{"search":"搜索内容","type" : {"1":"图书","2":"知识","3":"视频"}}
     ```
+    新书速递：
+    ```json
+    {"openId" : "","tv" : "","action":"goTo","props":{"service":"newBooks"}}
+    ```
     返回：
     ```json
     {"openId" : "","tv" : "","action":"goTo","props":{"service":"backSpace"}}
@@ -129,10 +133,10 @@
     ```		
     放大缩小：
     ```json
-    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"zoom","zoomRate":"","center":{"x":"","y":""}}}
+    {"openId" : "","tv" : "","action":"bookCon","props":{"service":"zoom","zoomRate":"","center":{"x":"","y":""},"scale":{"x":"","y":""}}}
     ```
     ```json
-    参数注释：{"zoomRate":"放大缩小比例，例：1.5","center" : {"x":"横向偏移量","y":"纵向偏移量"}}
+    参数注释：{"zoomRate":"放大缩小比例，例：1.5","center" : {"x":"中心点到左边比例，中间为0.5","y":"中心点到右边比例，中间为0.5"},"scale":{"x":"横向偏移比例，数值越大往对应方向偏移越大，默认1","y":"纵向偏移比例，数值越大往对应方向偏移越大，默认1"}}
     ```		
     跳转到某一页：
 	```json
