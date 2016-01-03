@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.12311003
+ * version:1.0.0.01040014
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -232,6 +232,7 @@
 
     function GHWebSocket() {
         this.wsUrl = "";
+        this.subscribe = "";
         this.actions = {};
         this.client = null;
     }
@@ -263,6 +264,7 @@
             if (key) {
                 $.getJSON(selfURL + '/json/' + key + '.json', function (data) {
                     self.wsUrl = data.ws;
+                    self.subscribe = data.subscribe;
                     if (this.wsUrl != "") {
                         self.connect();
                     } else {
@@ -273,7 +275,7 @@
         },
         _subscribe: function () {
             var self = this;
-            this.client.subscribe('/user/actions', function (data) {
+            this.client.subscribe(self.subscribe, function (data) {
                 //console.log('进入调用:', data);
                 var body = JSON.parse(data.body);
                 var _action = body.action;
