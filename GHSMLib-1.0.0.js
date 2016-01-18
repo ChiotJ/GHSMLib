@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.01040014
+ * version:1.0.0.01092112
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -250,7 +250,8 @@
             };
             this.client.connect({}, function () {
                 self._subscribe();
-            }, this.onClose);
+            }, this.onClose(self));
+
             window.onbeforeunload = function () {
                 self.disconnect();
             };
@@ -285,8 +286,13 @@
                 }
             });
         },
-        onClose: function () {
+        onClose: function (self) {
             //console.debug('WebSocket已退出');
+            return function () {
+                setTimeout(function () {
+                    self.connect();
+                }, 1000);
+            };
         },
         addActions: function (_actions) {
             if (typeof _actions === "object") {
