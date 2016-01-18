@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.201601181447
+ * version:1.0.0.201601182000
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -117,9 +117,9 @@
             });
 
             $item.click(function () {
-                $(this).attr("tabindex", "-1").focus();
                 var flag = true;
                 if (typeof options.click === "function") {
+                    $(this).attr("tabindex", "-1").focus();
                     flag = options.click(this);
                     if (typeof flag === "undefined")
                         flag = true;
