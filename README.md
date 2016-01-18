@@ -12,7 +12,7 @@
 ##引用
 
 ```html
-<script id="GHSMLib" src="GHSMLib-1.0.0.min.js" key="" type="application/javascript"></script>
+<script id="GHSMLib" src="http://172.16.188.26/web/GHSMLib/GHSMLib-1.0.0.min.js" key="" type="text/javascript"></script>
 ```
 
 ##联动参数调用方法

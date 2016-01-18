@@ -1,10 +1,10 @@
 /**
- * version:1.0.0.01092112
+ * version:1.0.0.201601181447
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
 !function (window, document) {
-    var $ = null, selfURL = "http://172.16.200.74/web/GHSMLib";
+    var $ = null, selfURL = "http://172.16.188.26/web/GHSMLib";
     var utils = (function () {
         var me = {};
         me.getTime = Date.now || new Date().getTime();
@@ -118,10 +118,13 @@
 
             $item.click(function () {
                 $(this).attr("tabindex", "-1").focus();
+                var flag = true;
                 if (typeof options.click === "function") {
-                    options.click(this);
+                    flag = options.click(this);
+                    if (typeof flag === "undefined")
+                        flag = true;
                 }
-                if (typeof options.enter === "function") {
+                if (typeof options.enter === "function" && flag) {
                     options.enter(this);
                 }
             });
