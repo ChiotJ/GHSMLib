@@ -60,6 +60,14 @@
     });
 
     $($("#aaa").find("li")[0]).attr("tabindex", "-1").focus();
+
+
+    var list = [
+        "http://localhost/ws/StreetView/audio/ajdwh.mp3",
+        "http://localhost/ws/StreetView/audio/cidm.mp3",
+        "http://localhost/ws/StreetView/audio/Refrain.mp3"
+    ];
+    var au = new GHSMLib.AudioPlayer(list, 2);
 </script>
 </body>
 </html>

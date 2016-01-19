@@ -37,6 +37,89 @@
     })();
 
 
+    function AudioPlayer(l, t) {
+        if (typeof l === "object") {
+            this.mList = l
+        } else {
+            return;
+        }
+        //type 0:单曲循环（默认） 1：顺序播放 2：随机播放
+        if (typeof t !== "number" || t < 0 || t > 2) {
+            this.type = 0;
+        } else {
+            this.type = t;
+        }
+        this.len = this.mList.length;
+        this.currentIndex = -1;
+        this.audio = null;
+        this.init();
+        return this;
+    }
+
+    AudioPlayer.prototype = {
+        init: function () {
+            var self = this, audio = document.createElement("audio"), body = document.getElementsByTagName('body')[0];
+            audio.style.display = "none";
+            body.appendChild(audio);
+            this.audio = audio
+            self.next();
+            audio.onended = function () {
+                self.next();
+            };
+        },
+        next: function () {
+            var type = this.type;
+            if (type == 0 || type == 1) {
+                if (this.currentIndex == -1) {
+                    this.currentIndex = 0;
+                } else if (this.currentIndex == (this.mList.length - 1)) {
+                    this.currentIndex = 0;
+                } else {
+                    this.currentIndex++;
+                }
+                this.audio.src = this.mList[this.currentIndex];
+                this.audio.play();
+            } else if (type == 2) {
+                var i = parseInt(this.mList.length * Math.random());
+                if ((this.mList.length > 1 && i == this.currentIndex) || i > (this.mList.length - 1)) {
+                    this.next();
+                    return;
+                }
+                this.playByMe(i);
+            }
+            console.log("Player.currentIndex : " + this.currentIndex);
+        },
+        pre: function () {
+            if (this.currentIndex == -1) {
+                this.currentIndex = 0;
+            } else if (this.currentIndex == 0) {
+                this.currentIndex = this.data.length - 1;
+            } else {
+                this.currentIndex--;
+            }
+            console.log("Player.currentIndex : " + this.currentIndex);
+            this.audio.src = this.mList[this.currentIndex];
+            this.audio.play();
+        },
+        pause: function () {
+            this.audio.pause();
+        },
+        play: function () {
+            if (this.currentIndex == -1) {
+                this.next();
+            } else {
+                this.audio.play();
+            }
+        },
+        playByMe: function (i) {
+            console.log("index:", i);
+            this.audio.src = this.mList[i];
+            this.audio.play();
+            this.currentIndex = i;
+        }
+
+    };
+
     function KeyControl() {
         this.index = {};
         this.size = {};
@@ -360,4 +443,5 @@
     window.GHSMLib = new GeHuaShuMeiLib();
     window.GHSMLib.utils = utils;
     window.GHSMLib.keyCon = new KeyControl();
+    window.GHSMLib.AudioPlayer = AudioPlayer;
 }(window, document);
