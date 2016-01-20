@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.201601190924
+ * version:1.0.0.201601201229
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -43,9 +43,9 @@
         } else {
             return;
         }
-        //type 0:单曲循环（默认） 1：顺序播放 2：随机播放
+        //type 0:单曲循环 1：顺序播放（默认） 2：随机播放
         if (typeof t !== "number" || t < 0 || t > 2) {
-            this.type = 0;
+            this.type = 1;
         } else {
             this.type = t;
         }
@@ -61,45 +61,36 @@
             var self = this, audio = document.createElement("audio"), body = document.getElementsByTagName('body')[0];
             audio.style.display = "none";
             body.appendChild(audio);
-            this.audio = audio
-            self.next();
+            this.audio = audio;
+            self.play();
             audio.onended = function () {
                 self.next();
             };
         },
         next: function () {
-            var type = this.type;
-            if (type == 0 || type == 1) {
-                if (this.currentIndex == -1) {
-                    this.currentIndex = 0;
-                } else if (this.currentIndex == (this.mList.length - 1)) {
-                    this.currentIndex = 0;
-                } else {
-                    this.currentIndex++;
+            var type = this.type, i = this.currentIndex;
+            if (type == 0) {
+                if (i == -1) {
+                    i = 0;
                 }
-                this.audio.src = this.mList[this.currentIndex];
-                this.audio.play();
+            } else if (type == 1) {
+                if (i == -1) {
+                    i = 0;
+                } else if (i == (this.len - 1)) {
+                    i = 0;
+                } else {
+                    i++;
+                }
             } else if (type == 2) {
-                var i = parseInt(this.mList.length * Math.random());
-                if ((this.mList.length > 1 && i == this.currentIndex) || i > (this.mList.length - 1)) {
+                i = parseInt(this.len * Math.random());
+                if ((this.len > 1 && i == this.currentIndex) || i > (this.len - 1) || i < 0) {
                     this.next();
                     return;
                 }
-                this.playByMe(i);
             }
-            console.log("Player.currentIndex : " + this.currentIndex);
+            this.playByIdx(i);
         },
         pre: function () {
-            if (this.currentIndex == -1) {
-                this.currentIndex = 0;
-            } else if (this.currentIndex == 0) {
-                this.currentIndex = this.data.length - 1;
-            } else {
-                this.currentIndex--;
-            }
-            console.log("Player.currentIndex : " + this.currentIndex);
-            this.audio.src = this.mList[this.currentIndex];
-            this.audio.play();
         },
         pause: function () {
             this.audio.pause();
@@ -111,11 +102,25 @@
                 this.audio.play();
             }
         },
-        playByMe: function (i) {
-            console.log("index:", i);
+        playByIdx: function (i) {
             this.audio.src = this.mList[i];
             this.audio.play();
             this.currentIndex = i;
+        },
+        addMusic: function (m) {
+            this.mList.push(m);
+            this.len = this.mList.length;
+        },
+        setMusic: function (m) {
+            this.mList = m;
+            this.len = this.mList.length;
+        },
+        setType: function (t) {
+            //type 0:单曲循环 1：顺序播放（默认） 2：随机播放
+            if (typeof t === "number" && t >= 0 && t < 3) {
+                this.type = t;
+                console.log(this.type);
+            }
         }
 
     };
