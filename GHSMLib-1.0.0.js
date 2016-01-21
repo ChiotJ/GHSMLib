@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.201601201229
+ * version:1.0.0.201601211613
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -182,6 +182,36 @@
                         break;
                     case 40: //下键
                         return self._executeFun(options.down, item);
+                        break;
+                    case 48: //0
+                        return self._executeFun(options.n0, item);
+                        break;
+                    case 49: //1
+                        return self._executeFun(options.n1, item);
+                        break;
+                    case 50: //2
+                        return self._executeFun(options.n2, item);
+                        break;
+                    case 51: //3
+                        return self._executeFun(options.n3, item);
+                        break;
+                    case 52: //4
+                        return self._executeFun(options.n4, item);
+                        break;
+                    case 53: //5
+                        return self._executeFun(options.n5, item);
+                        break;
+                    case 54: //6
+                        return self._executeFun(options.n6, item);
+                        break;
+                    case 55: //7
+                        return self._executeFun(options.n7, item);
+                        break;
+                    case 56: //8
+                        return self._executeFun(options.n8, item);
+                        break;
+                    case 57: //9
+                        return self._executeFun(options.n9, item);
                         break;
                     default:
                         break;
