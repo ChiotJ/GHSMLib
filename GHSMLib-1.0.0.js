@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.201601211613
+ * version:1.0.0.201601241742
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -38,22 +38,22 @@
 
 
     function UserInfo() {
+        var self = this;
         this.initStatus = false;
         this.ui = {};
         this.fun = [];
         var street;
 
         var init = function () {
-            var self = this;
             if (typeof CyberCloud != "undefined") {
-                this.tvCode = CyberCloud.GetParam("CardID").ParamValue;
+                self.ui.cardId = CyberCloud.GetParam("CardID").ParamValue;
             } else {
-                this.tvCode = "card1";
+                self.ui.cardId = "card1";
             }
 
             $.ajax({
                 url: "http://wx.digital-media.com.cn/wx/box/getBoxByCardId",
-                data: {"cardId": self.tvCode},
+                data: {"cardId": self.ui.cardId},
                 type: "POST",
                 dataType: 'json',
                 success: function (data) {
@@ -61,21 +61,27 @@
                         self.ui.name = data.result.name;
                         self.ui.phone = data.result.phone;
                         self.ui.address = data.result.address;
+                        self.ui.location = {};
                         self.ui.location.lat = data.result.latitude;
                         self.ui.location.lng = data.result.longitude;
-                        self.ui.departmentId = data.result.departmentId;
+                        if (typeof data.result.department === "object") {
+                            self.ui.departmentId = data.result.department.id;
+                        }
                         getPolygon();
+                    } else {
+                        self.err = "服务器错误";
+                        runFun();
                     }
                 },
                 error: function (data) {
-                    self.err = "无法获取";
+                    self.err = "服务器错误";
+                    runFun();
                 }
             });
         };
 
 
         var isInWhere = function () {
-            var self = this;
             var point = {
                 lat: self.ui.location.lat,
                 lng: self.ui.location.lng
@@ -88,11 +94,13 @@
                 var poly = community.poly;
                 var flag = isInsidePolygon(point, poly);
                 if (flag) {
-                    if (community.id1 != self.ui.departmentId) {
-                        self.ui.departmentId = community.id1;
-                        self.ui.community.name = community.name;
-                        self.ui.community.id1 = community.id1;
-                        self.ui.community.id2 = community.id2;
+                    var departmentId = self.ui.departmentId;
+                    self.ui.departmentId = community.id1;
+                    self.ui.community = {};
+                    self.ui.community.name = community.name;
+                    self.ui.community.id1 = community.id1;
+                    self.ui.community.id2 = community.id2;
+                    if (typeof departmentId === "undefined" || departmentId != self.ui.departmentId) {
                         save();
                     }
                     break;
@@ -100,19 +108,37 @@
             }
 
             if (typeof self.ui.community == "undefined") {
-                this.err = "此地址不属于任何社区";
+                self.ui.community = "此地址不属于任何社区";
             }
+            runFun();
+        };
 
+        var runFun = function () {
+            self.initStatus = true;
             if (self.fun.length > 0) {
                 for (var i in self.fun) {
                     self.fun[i](self.ui, self.err);
                 }
             }
-
         };
 
         var save = function () {
-
+            $.ajax({
+                url: "http://wx.digital-media.com.cn/wx/box/save",
+                type: "POST",
+                async: false,
+                data: ({
+                    cardId: self.ui.cardId,
+                    address: self.ui.address,
+                    name: self.ui.name,
+                    phone: self.ui.phone,
+                    latitude: self.ui.location.lat,
+                    longitude: self.ui.location.lng,
+                    departmentId: self.ui.community.id1
+                }),
+                success: function (data) {
+                }
+            });
         };
 
         var getPolygon = function () {
@@ -133,7 +159,7 @@
                 (pt.lng < (poly[j].lng - poly[i].lng) * (pt.lat - poly[i].lat) / (poly[j].lat - poly[i].lat) + poly[i].lng) &&
                 (c = !c);
             return c;
-        }
+        };
 
         init();
     }
@@ -142,15 +168,13 @@
         getUserInfo: function (fun) {
             if (typeof fun === "function") {
                 if (this.initStatus) {
-                    fun(ui, err);
+                    fun(this.ui, this.err);
                 } else {
-                    console.log(this.fun);
                     this.fun.push(fun);
                 }
             } else {
                 console.error("参数错误");
             }
-            return this.ui;
         }
     };
 
@@ -549,7 +573,10 @@
         this.utils = utils;
         this.keyCon = new KeyControl();
         this.AudioPlayer = AudioPlayer;
-        this.getUserInfo = new UserInfo().getUserInfo;
+        var ui = new UserInfo();
+        this.getUserInfo = function (fun) {
+            ui.getUserInfo(fun);
+        };
     }
 
     GeHuaShuMeiLib.prototype = {
