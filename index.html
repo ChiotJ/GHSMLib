@@ -68,6 +68,14 @@
         "http://localhost/ws/StreetView/audio/Refrain.mp3"
     ];
     var au = new GHSMLib.AudioPlayer(list, 2);
+
+
+    var ui = new GHSMLib.getUserInfo(function (data, err) {
+        console.log(data);
+        if (typeof err !== "undefined")
+            console.log(err);
+    });
+    console.log(ui);
 </script>
 </body>
 </html>

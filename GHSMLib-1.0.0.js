@@ -37,6 +37,124 @@
     })();
 
 
+    function UserInfo() {
+        this.initStatus = false;
+        this.ui = {};
+        this.fun = [];
+        var street;
+
+        var init = function () {
+            var self = this;
+            if (typeof CyberCloud != "undefined") {
+                this.tvCode = CyberCloud.GetParam("CardID").ParamValue;
+            } else {
+                this.tvCode = "card1";
+            }
+
+            $.ajax({
+                url: "http://wx.digital-media.com.cn/wx/box/getBoxByCardId",
+                data: {"cardId": self.tvCode},
+                type: "POST",
+                dataType: 'json',
+                success: function (data) {
+                    if (data.success) {
+                        self.ui.name = data.result.name;
+                        self.ui.phone = data.result.phone;
+                        self.ui.address = data.result.address;
+                        self.ui.location.lat = data.result.latitude;
+                        self.ui.location.lng = data.result.longitude;
+                        self.ui.departmentId = data.result.departmentId;
+                        getPolygon();
+                    }
+                },
+                error: function (data) {
+                    self.err = "无法获取";
+                }
+            });
+        };
+
+
+        var isInWhere = function () {
+            var self = this;
+            var point = {
+                lat: self.ui.location.lat,
+                lng: self.ui.location.lng
+            };
+
+            var communitys = street.communitys;
+
+            for (var key in communitys) {
+                var community = communitys[key];
+                var poly = community.poly;
+                var flag = isInsidePolygon(point, poly);
+                if (flag) {
+                    if (community.id1 != self.ui.departmentId) {
+                        self.ui.departmentId = community.id1;
+                        self.ui.community.name = community.name;
+                        self.ui.community.id1 = community.id1;
+                        self.ui.community.id2 = community.id2;
+                        save();
+                    }
+                    break;
+                }
+            }
+
+            if (typeof self.ui.community == "undefined") {
+                this.err = "此地址不属于任何社区";
+            }
+
+            if (self.fun.length > 0) {
+                for (var i in self.fun) {
+                    self.fun[i](self.ui, self.err);
+                }
+            }
+
+        };
+
+        var save = function () {
+
+        };
+
+        var getPolygon = function () {
+            $.getJSON(selfURL + '/json/map/polygon/4d8fa1451b6ad04ed39639d864b3105c.json', function (data) {
+                street = data;
+                isInWhere();
+            });
+        };
+
+        /**
+         * 计算一个点是否在多边形里
+         * @param {Object} pt 标注点
+         * @param {Object} poly 多边形数组
+         */
+        var isInsidePolygon = function (pt, poly) {
+            for (var c = false, i = -1, l = poly.length, j = l - 1; ++i < l; j = i)
+                ((poly[i].lat <= pt.lat && pt.lat < poly[j].lat) || (poly[j].lat <= pt.lat && pt.lat < poly[i].lat)) &&
+                (pt.lng < (poly[j].lng - poly[i].lng) * (pt.lat - poly[i].lat) / (poly[j].lat - poly[i].lat) + poly[i].lng) &&
+                (c = !c);
+            return c;
+        }
+
+        init();
+    }
+
+    UserInfo.prototype = {
+        getUserInfo: function (fun) {
+            if (typeof fun === "function") {
+                if (this.initStatus) {
+                    fun(ui, err);
+                } else {
+                    console.log(this.fun);
+                    this.fun.push(fun);
+                }
+            } else {
+                console.error("参数错误");
+            }
+            return this.ui;
+        }
+    };
+
+
     function AudioPlayer(l, t) {
         if (typeof l === "object") {
             this.mList = l
@@ -427,6 +545,11 @@
     function GeHuaShuMeiLib() {
         this._WS = new GHWebSocket();
         this._initScript();
+
+        this.utils = utils;
+        this.keyCon = new KeyControl();
+        this.AudioPlayer = AudioPlayer;
+        this.getUserInfo = new UserInfo().getUserInfo;
     }
 
     GeHuaShuMeiLib.prototype = {
@@ -476,7 +599,4 @@
     };
 
     window.GHSMLib = new GeHuaShuMeiLib();
-    window.GHSMLib.utils = utils;
-    window.GHSMLib.keyCon = new KeyControl();
-    window.GHSMLib.AudioPlayer = AudioPlayer;
 }(window, document);
