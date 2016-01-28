@@ -33,6 +33,12 @@
             if (r != null) return (r[2]);
             return null;
         };
+        me.getHashString = function (name) {
+            var reg = new RegExp("(^|&|#)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.hash.substr(1).match(reg);
+            if (r != null) return (r[2]);
+            return null;
+        };
         return me;
     })();
 
@@ -581,7 +587,7 @@
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201601281502',
+        version: '1.0.0.201601281947',
         _init: function () {
             this._WS._init(this.cardId);
         },
