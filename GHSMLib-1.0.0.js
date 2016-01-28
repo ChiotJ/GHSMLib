@@ -1,5 +1,5 @@
 /**
- * version:1.0.0.201601241742
+ * version:1.0.0
  * Created by jianyingshuo on 2015/12/08.
  */
 'use strict';
@@ -501,12 +501,12 @@
     }
 
     GHWebSocket.prototype = {
-        _init: function (_tvCode) {
-            this.tvCode = _tvCode;
+        _init: function (_cardId) {
+            this.cardId = _cardId;
             this._verifyWS();
         },
         connect: function () {
-            var self = this, sock = new SockJS(this.wsUrl + this.tvCode);
+            var self = this, sock = new SockJS(this.wsUrl + this.cardId);
             this.client = Stomp.over(sock);
             this.client.debug = function (msg) {
                 //console.debug(msg)
@@ -526,7 +526,7 @@
         _verifyWS: function () {
             var self = this, key = $("#GHSMLib").attr("key");
             if (key) {
-                $.getJSON(selfURL + '/json/' + key + '.json', function (data) {
+                $.getJSON(selfURL + '/json/application/' + key + '.json', function (data) {
                     self.wsUrl = data.ws;
                     self.subscribe = data.subscribe;
                     if (this.wsUrl != "") {
@@ -567,6 +567,7 @@
         }
     };
     function GeHuaShuMeiLib() {
+        this.cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue : "card1";
         this._WS = new GHWebSocket();
         this._initScript();
 
@@ -580,13 +581,9 @@
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0',
-        tvCode: '',
+        version: '1.0.0.201601281502',
         _init: function () {
-            if (typeof CyberCloud != "undefined") {
-                this.tvCode = CyberCloud.GetParam("CardID").ParamValue;
-                this._WS._init(this.tvCode);
-            }
+            this._WS._init(this.cardId);
         },
         _initScript: function () {
             var loadJsNum = 0, jsTotal = 2, loadTimeOut = 5000, libURL = selfURL + "/lib/";

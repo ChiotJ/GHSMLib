@@ -1,0 +1,6 @@
+{
+  "id": "3de3ec9f0b380ff00d08c9e78c98ad9b",
+  "name": "歌华生活圈",
+  "ws": "http://172.16.188.26/chaowai/tv/api/ws?tvCode=",
+  "subscribe":"/user/queue/actions"
+}

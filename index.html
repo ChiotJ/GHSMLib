@@ -32,6 +32,7 @@
         type="application/javascript"></script>
 
 <script>
+    console.log(GHSMLib.cardId);
     GHSMLib.addActions({
         goTo: function (props, user) {
             document.getElementById("geTo").innerHTML = "user:" + user + ";props:" + props;
