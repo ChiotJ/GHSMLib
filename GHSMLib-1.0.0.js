@@ -43,19 +43,16 @@
     })();
 
 
-    function UserInfo() {
+    function UserInfo(cardId) {
         var self = this;
         this.initStatus = false;
-        this.ui = {};
+        this.ui = {
+            cardId: cardId
+        };
         this.fun = [];
         var street;
 
         var init = function () {
-            if (typeof CyberCloud != "undefined") {
-                self.ui.cardId = CyberCloud.GetParam("CardID").ParamValue;
-            } else {
-                self.ui.cardId = "card1";
-            }
 
             $.ajax({
                 url: "http://wx.digital-media.com.cn/wx/box/getBoxByCardId",
@@ -574,21 +571,21 @@
         }
     };
     function GeHuaShuMeiLib() {
-        this.cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue : "card1";
+        this.cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA","") : "" : "";
         this._WS = new GHWebSocket();
         this._initScript();
 
         this.utils = utils;
         this.keyCon = new KeyControl();
         this.AudioPlayer = AudioPlayer;
-        var ui = new UserInfo();
+        var ui = new UserInfo(this.cardId);
         this.getUserInfo = function (fun) {
             ui.getUserInfo(fun);
         };
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201601291050',
+        version: '1.0.0.201601292018',
         _init: function () {
             this._WS._init(this.cardId);
         },
