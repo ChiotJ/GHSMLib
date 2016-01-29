@@ -102,6 +102,7 @@
                 if (flag) {
                     var departmentId = self.ui.departmentId;
                     self.ui.departmentId = community.id1;
+                    self.ui.street = street.id;
                     self.ui.community = {};
                     self.ui.community.name = community.name;
                     self.ui.community.id1 = community.id1;
@@ -148,7 +149,7 @@
         };
 
         var getPolygon = function () {
-            $.getJSON(selfURL + '/json/map/polygon/4d8fa1451b6ad04ed39639d864b3105c.json', function (data) {
+            $.getJSON(selfURL + '/json/map/polygon/11e6801f-9a5d-4a6b-be6c-e6bc7820cc57.json', function (data) {
                 street = data;
                 isInWhere();
             });
@@ -587,7 +588,7 @@
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201601281947',
+        version: '1.0.0.201601291050',
         _init: function () {
             this._WS._init(this.cardId);
         },
