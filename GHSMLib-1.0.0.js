@@ -57,7 +57,7 @@
             $.ajax({
                 url: "http://172.16.188.26/chaowai/box/getBoxByCardId",
                 data: {"cardId": self.ui.cardId},
-                type: "POST",
+                type: "GET",
                 dataType: 'json',
                 success: function (data) {
                     if (data.success) {
@@ -128,7 +128,7 @@
 
         var save = function () {
             $.ajax({
-                url: "http://wx.digital-media.com.cn/wx/box/save",
+                url: "http://172.16.188.26/chaowai/box/save",
                 type: "POST",
                 async: false,
                 data: ({
