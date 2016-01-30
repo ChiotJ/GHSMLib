@@ -55,7 +55,7 @@
         var init = function () {
 
             $.ajax({
-                url: "http://wx.digital-media.com.cn/wx/box/getBoxByCardId",
+                url: "http://172.16.188.26/chaowai/box/getBoxByCardId",
                 data: {"cardId": self.ui.cardId},
                 type: "POST",
                 dataType: 'json',
@@ -571,7 +571,7 @@
         }
     };
     function GeHuaShuMeiLib() {
-        this.cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA","") : "" : "";
+        this.cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
         this._WS = new GHWebSocket();
         this._initScript();
 
@@ -585,7 +585,7 @@
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201601292018',
+        version: '1.0.0.201601292216',
         _init: function () {
             this._WS._init(this.cardId);
         },
