@@ -43,6 +43,12 @@
     })();
 
 
+    function pageViewRecord(cardId) {
+        var url = window.location.href;
+        $.getJSON('http://172.16.188.26/web/pv.json?url=' + url + "&cardId=" + cardId);
+    }
+
+
     function UserInfo(cardId) {
         var self = this;
         this.initStatus = false;
@@ -582,10 +588,11 @@
         this.getUserInfo = function (fun) {
             ui.getUserInfo(fun);
         };
+        pageViewRecord(this.cardId);
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201601292216',
+        version: '1.0.0.201602011903',
         _init: function () {
             this._WS._init(this.cardId);
         },
