@@ -66,7 +66,7 @@
             }
         });
 
-        if (appName) {
+        if (appName && cardId) {
             this.appName = appName;
             this.cardId = cardId;
             this.pv();
