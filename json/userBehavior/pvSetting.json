@@ -1,0 +1,28 @@
+{
+  "172.16.188.26": [
+    {
+      "name": "StreetView",
+      "regular": [
+        "/web/StreetView/"
+      ]
+    },
+    {
+      "name": "LifeCircle",
+      "regular": [
+        "/web/LifeCircle/"
+      ]
+    },
+    {
+      "name": "Library",
+      "regular": [
+        "/library4010/"
+      ]
+    },
+    {
+      "name": "FlyTVYun",
+      "regular": [
+        "/web/flytvYun/"
+      ]
+    }
+  ]
+}

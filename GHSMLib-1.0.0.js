@@ -2,8 +2,8 @@
  * version:1.0.0
  * Created by jianyingshuo on 2015/12/08.
  */
-'use strict';
 !function (window, document) {
+    'use strict';
     var $ = null, selfURL = "http://172.16.188.26/web/GHSMLib";
     var utils = (function () {
         var me = {};
@@ -43,11 +43,39 @@
     })();
 
 
-    function pageViewRecord(cardId) {
-        var url = window.location.href;
-        $.getJSON('http://172.16.188.26/web/pv.json?url=' + url + "&cardId=" + cardId);
+    function UserBehavior(cardId) {
+        var self = this, hostname = window.location.hostname, pathname = window.location.pathname, appName;
+
+        $.ajax({
+            url: selfURL + '/json/userBehavior/pvSetting.json',
+            async: false,
+            success: function (data) {
+                var list = data[hostname];
+                if (list && list.length > 0) {
+                    for (var key in list) {
+                        var regular = list[key].regular;
+                        var name = list[key].name;
+                        for (var r in regular) {
+                            if (pathname.indexOf(regular[r]) == 0) {
+                                appName = name;
+                            }
+                        }
+
+                    }
+                }
+            }
+        });
+
+        if (appName) {
+            this.appName = appName;
+            this.cardId = cardId;
+            this.pv();
+        }
     }
 
+    UserBehavior.prototype.pv = function () {
+        $.getJSON('http://172.16.188.26/web/userBehavior/pv.json?appName=' + this.appName + '&cardId=' + this.cardId);
+    };
 
     function UserInfo(cardId) {
         var self = this;
@@ -271,7 +299,7 @@
             //type 0:单曲循环 1：顺序播放（默认） 2：随机播放
             if (typeof t === "number" && t >= 0 && t < 3) {
                 this.type = t;
-                console.log(this.type);
+                //console.log(this.type);
             }
         }
 
@@ -588,11 +616,12 @@
         this.getUserInfo = function (fun) {
             ui.getUserInfo(fun);
         };
-        pageViewRecord(this.cardId);
+
+        var ub = new UserBehavior(this.cardId);
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201602011903',
+        version: '1.0.0.201602021221',
         _init: function () {
             this._WS._init(this.cardId);
         },
