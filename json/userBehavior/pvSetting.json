@@ -25,5 +25,14 @@
         "/web/flytvYun/pages/lifeCircle/"
       ]
     }
+  ],
+  "172.16.188.13": [
+    {
+      "name": "GuoXue",
+      "regular": [
+        "/yun/smartcard/",
+        "/yun/tv/"
+      ]
+    }
   ]
 }

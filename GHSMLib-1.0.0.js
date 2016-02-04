@@ -74,7 +74,8 @@
     }
 
     UserBehavior.prototype.pv = function () {
-        $.getJSON('http://172.16.188.26/web/userBehavior/pv.json?appName=' + this.appName + '&cardId=' + this.cardId);
+        var timestamp = new Date().getTime();
+        $.getJSON('http://172.16.188.26/web/userBehavior/pv.json?appName=' + this.appName + '&cardId=' + this.cardId + "&timestamp=" + timestamp);
     };
 
     function UserInfo(cardId) {
@@ -621,7 +622,7 @@
     }
 
     GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201602021221',
+        version: '1.0.0.201602041104',
         _init: function () {
             this._WS._init(this.cardId);
         },
