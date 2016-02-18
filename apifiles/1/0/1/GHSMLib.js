@@ -4,7 +4,8 @@
  */
 !function (window, document) {
     'use strict';
-    var $ = window.GHSMLib.JQuery, selfURL = window.GHSMLib.baseURL;
+    var $ = window.GHSMLib.JQuery, selfURL = window.GHSMLib.baseURL, APIUrl = window.GHSMLib.APIUrl;
+
     var utils = (function () {
         var me = {};
         me.getTime = Date.now || new Date().getTime();
@@ -25,7 +26,7 @@
             }
         };
         me.qrCode = function (text, size) {
-            return "http://172.16.188.13/api/common/Image/qrCode.png?text=" + text + "&size=" + size;
+            return APIUrl[1].replace("$text", text).replace("$size", size);
         };
         me.getQueryString = function (name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -79,40 +80,35 @@
     };
 
     function UserInfo(cardId) {
-        var self = this;
-        this.initStatus = false;
-        this.ui = {
+        var initStatus = false, ui = {
             cardId: cardId
-        };
-        this.fun = [];
-        var street;
+        }, fun = [], street, err;
 
         var init = function () {
-
             $.ajax({
-                url: "http://172.16.188.26/chaowai/box/getBoxByCardId",
-                data: {"cardId": self.ui.cardId},
+                url: APIUrl[2] + 'box/getBoxByCardId',
+                data: {"cardId": ui.cardId},
                 type: "GET",
                 dataType: 'json',
                 success: function (data) {
                     if (data.success) {
-                        self.ui.name = data.result.name;
-                        self.ui.phone = data.result.phone;
-                        self.ui.address = data.result.address;
-                        self.ui.location = {};
-                        self.ui.location.lat = data.result.latitude;
-                        self.ui.location.lng = data.result.longitude;
+                        ui.name = data.result.name;
+                        ui.phone = data.result.phone;
+                        ui.address = data.result.address;
+                        ui.location = {};
+                        ui.location.lat = data.result.latitude;
+                        ui.location.lng = data.result.longitude;
                         if (typeof data.result.department === "object") {
-                            self.ui.departmentId = data.result.department.id;
+                            ui.departmentId = data.result.department.id;
                         }
                         getPolygon();
                     } else {
-                        self.err = "服务器错误";
+                        err = "服务器错误";
                         runFun();
                     }
                 },
                 error: function (data) {
-                    self.err = "服务器错误";
+                    err = "服务器错误";
                     runFun();
                 }
             });
@@ -121,8 +117,8 @@
 
         var isInWhere = function () {
             var point = {
-                lat: self.ui.location.lat,
-                lng: self.ui.location.lng
+                lat: ui.location.lat,
+                lng: ui.location.lng
             };
 
             var communitys = street.communitys;
@@ -132,48 +128,48 @@
                 var poly = community.poly;
                 var flag = isInsidePolygon(point, poly);
                 if (flag) {
-                    var departmentId = self.ui.departmentId;
-                    self.ui.departmentId = community.id1;
-                    self.ui.street = street.id;
-                    self.ui.community = {};
-                    self.ui.community.name = community.name;
-                    self.ui.community.id1 = community.id1;
-                    self.ui.community.id2 = community.id2;
-                    if (typeof departmentId === "undefined" || departmentId != self.ui.departmentId) {
+                    var departmentId = ui.departmentId;
+                    ui.departmentId = community.id1;
+                    ui.street = street.id;
+                    ui.community = {};
+                    ui.community.name = community.name;
+                    ui.community.id1 = community.id1;
+                    ui.community.id2 = community.id2;
+                    if (typeof departmentId === "undefined" || departmentId != ui.departmentId) {
                         save();
                     }
                     break;
                 }
             }
 
-            if (typeof self.ui.community == "undefined") {
-                self.ui.community = "此地址不属于任何社区";
+            if (typeof ui.community == "undefined") {
+                ui.community = "此地址不属于任何社区";
             }
             runFun();
         };
 
         var runFun = function () {
-            self.initStatus = true;
-            if (self.fun.length > 0) {
-                for (var i in self.fun) {
-                    self.fun[i](self.ui, self.err);
+            initStatus = true;
+            if (fun.length > 0) {
+                for (var i in fun) {
+                    fun[i](ui, err);
                 }
             }
         };
 
         var save = function () {
             $.ajax({
-                url: "http://172.16.188.26/chaowai/box/save",
+                url: APIUrl[2] + "box/save",
                 type: "POST",
                 async: false,
                 data: ({
-                    cardId: self.ui.cardId,
-                    address: self.ui.address,
-                    name: self.ui.name,
-                    phone: self.ui.phone,
-                    latitude: self.ui.location.lat,
-                    longitude: self.ui.location.lng,
-                    departmentId: self.ui.community.id1
+                    cardId: ui.cardId,
+                    address: ui.address,
+                    name: ui.name,
+                    phone: ui.phone,
+                    latitude: ui.location.lat,
+                    longitude: ui.location.lng,
+                    departmentId: ui.community.id1
                 }),
                 success: function (data) {
                 }
@@ -181,7 +177,7 @@
         };
 
         var getPolygon = function () {
-            $.getJSON(selfURL + '/json/map/polygon/11e6801f-9a5d-4a6b-be6c-e6bc7820cc57.json', function (data) {
+            $.getJSON(APIUrl[0] + APIUrl[4].replace("$street", "11e6801f-9a5d-4a6b-be6c-e6bc7820cc57"), function (data) {
                 street = data;
                 isInWhere();
             });
@@ -201,55 +197,68 @@
         };
 
         init();
-    }
 
-    UserInfo.prototype = {
-        getUserInfo: function (fun) {
-            if (typeof fun === "function") {
-                if (this.initStatus) {
-                    fun(this.ui, this.err);
+        return {
+            getUserInfo: function (_fun) {
+                if (typeof _fun === "function") {
+                    if (initStatus) {
+                        _fun(ui, err);
+                    } else {
+                        fun.push(_fun);
+                    }
                 } else {
-                    this.fun.push(fun);
+                    console.error("参数错误");
                 }
-            } else {
-                console.error("参数错误");
             }
         }
-    };
-
+    }
 
     function AudioPlayer(l, t) {
+        var mList, type, len, currentIndex, audio;
         if (typeof l === "object") {
-            this.mList = l
+            mList = l
         } else {
             return;
         }
         //type 0:单曲循环 1：顺序播放（默认） 2：随机播放
         if (typeof t !== "number" || t < 0 || t > 2) {
-            this.type = 1;
+            type = 1;
         } else {
-            this.type = t;
+            type = t;
         }
-        this.len = this.mList.length;
-        this.currentIndex = -1;
-        this.audio = null;
-        this.init();
-        return this;
-    }
+        len = mList.length;
+        currentIndex = -1;
+        audio = null;
 
-    AudioPlayer.prototype = {
-        init: function () {
-            var self = this, audio = document.createElement("audio"), body = document.getElementsByTagName('body')[0];
+        var init = function () {
+            var body = document.getElementsByTagName('body')[0];
+            audio = document.createElement("audio");
             audio.style.display = "none";
             body.appendChild(audio);
-            this.audio = audio;
-            self.play();
+            play();
             audio.onended = function () {
-                self.next();
+                next();
             };
-        },
-        next: function () {
-            var type = this.type, i = this.currentIndex;
+        };
+
+        var play = function () {
+            if (currentIndex == -1) {
+                next();
+            } else {
+                audio.play();
+            }
+        };
+
+        var pause = function () {
+            audio.pause();
+        };
+
+        var pre = function () {
+
+        };
+
+        var next = function () {
+            var i = currentIndex;
             if (type == 0) {
                 if (i == -1) {
                     i = 0;
@@ -257,63 +266,60 @@
             } else if (type == 1) {
                 if (i == -1) {
                     i = 0;
-                } else if (i == (this.len - 1)) {
+                } else if (i == (len - 1)) {
                     i = 0;
                 } else {
                     i++;
                 }
             } else if (type == 2) {
-                i = parseInt(this.len * Math.random());
-                if ((this.len > 1 && i == this.currentIndex) || i > (this.len - 1) || i < 0) {
-                    this.next();
+                i = parseInt(len * Math.random());
+                if ((len > 1 && i == currentIndex) || i > (len - 1) || i < 0) {
+                    next();
                     return;
                 }
             }
-            this.playByIdx(i);
-        },
-        pre: function () {
-        },
-        pause: function () {
-            this.audio.pause();
-        },
-        play: function () {
-            if (this.currentIndex == -1) {
-                this.next();
-            } else {
-                this.audio.play();
-            }
-        },
-        playByIdx: function (i) {
-            this.audio.src = this.mList[i];
-            this.audio.play();
-            this.currentIndex = i;
-        },
-        addMusic: function (m) {
-            this.mList.push(m);
-            this.len = this.mList.length;
-        },
-        setMusic: function (m) {
-            this.mList = m;
-            this.len = this.mList.length;
-        },
-        setType: function (t) {
+            playByIdx(i);
+        };
+
+        var playByIdx = function (i) {
+            audio.src = mList[i];
+            audio.play();
+            currentIndex = i;
+        };
+
+        var addMusic = function (m) {
+            mList.push(m);
+            len = mList.length;
+        };
+        var setMusic = function (m) {
+            mList = m;
+            len = mList.length;
+        };
+        var setType = function (t) {
             //type 0:单曲循环 1：顺序播放（默认） 2：随机播放
             if (typeof t === "number" && t >= 0 && t < 3) {
-                this.type = t;
-                //console.log(this.type);
+                type = t;
+                //console.log(type);
             }
+        };
+
+
+        init();
+        return {
+            next: next,
+            pre: pre,
+            pause: pause,
+            playByIdx: playByIdx,
+            addMusic: addMusic,
+            setMusic: setMusic,
+            setType: setType
         }
-
-    };
-
-    function KeyControl() {
-        this.index = {};
-        this.size = {};
     }
 
+    function KeyControl() {
+        var index = {}, size = {};
 
-    KeyControl.prototype = {
-        _executeFun: function (fun, item) {
+        var executeFun = function (fun, item) {
             var order = ["before", "center", "after"];
             var flag = true;
             if (typeof fun === "function") {
@@ -330,315 +336,311 @@
                 }
             }
             return flag
-        },
-        /*普通按键监听*/
-        keyListener: function (options) {
-            var self = this, id = options.id, $id = $('#' + id), $item = $id;
-            document.getElementById(id).onkeydown = function (e) {
-                var item = e.target;
-                switch (e && e.keyCode) {
-                    case 8: //backspace
-                        return self._executeFun(options.back, item);
-                        break;
-                    case 13: //enter 键
-                        return self._executeFun(options.enter, item);
-                        break;
-                    case 27: //Esc
-                        return self._executeFun(options.esc, item);
-                        break;
-                    case 33: //pageUp
-                        return self._executeFun(options.pageUp, item);
-                        break;
-                    case 34: //pageDown
-                        return self._executeFun(options.pageDown, item);
-                        break;
-                    case 37: //左键
-                        return self._executeFun(options.left, item);
-                        break;
-                    case 38: //上键
-                        return self._executeFun(options.up, item);
-                        break;
-                    case 39: //右键
-                        return self._executeFun(options.right, item);
-                        break;
-                    case 40: //下键
-                        return self._executeFun(options.down, item);
-                        break;
-                    case 48: //0
-                        return self._executeFun(options.n0, item);
-                        break;
-                    case 49: //1
-                        return self._executeFun(options.n1, item);
-                        break;
-                    case 50: //2
-                        return self._executeFun(options.n2, item);
-                        break;
-                    case 51: //3
-                        return self._executeFun(options.n3, item);
-                        break;
-                    case 52: //4
-                        return self._executeFun(options.n4, item);
-                        break;
-                    case 53: //5
-                        return self._executeFun(options.n5, item);
-                        break;
-                    case 54: //6
-                        return self._executeFun(options.n6, item);
-                        break;
-                    case 55: //7
-                        return self._executeFun(options.n7, item);
-                        break;
-                    case 56: //8
-                        return self._executeFun(options.n8, item);
-                        break;
-                    case 57: //9
-                        return self._executeFun(options.n9, item);
-                        break;
-                    default:
-                        break;
-                }
-            };
+        };
 
-            if (options.label) {
-                $item = $id.find(options.label)
-            }
-
-            $item.focus(function () {
-                if (typeof options.focus === "function") {
-                    options.focus(this);
-                }
-            });
-
-            $item.blur(function () {
-                if (typeof options.blur === "function") {
-                    options.blur(this);
-                }
-            });
-
-            $item.click(function () {
-                var flag = true;
-                if (typeof options.click === "function") {
-                    flag = options.click(this);
-                    if (typeof flag === "undefined")
-                        flag = true;
-                }
-                if (typeof options.enter === "function" && flag) {
-                    $(this).attr("tabindex", "-1").focus();
-                    options.enter(this);
-                }
-            });
-        },
-        /*列表按键监听*/
-        listKeyListener: function (options) {
-            var self = this, id = options.id, $idLi = $('#' + id).find(options.label), length = $idLi.length;
-            self.index[id] = 0;
-            self.size[id] = length;
-
-            if (typeof options.left !== "function") {
-                if (typeof options.left !== "object") {
-                    options.left = function (item) {
-                        var idx = $(item).index();
-                        $($idLi[--idx]).attr('tabindex', -1).focus();
+        return {
+            /*普通按键监听*/
+            keyListener: function (options) {
+                var id = options.id, $id = $('#' + id), $item = $id;
+                document.getElementById(id).onkeydown = function (e) {
+                    var item = e.target;
+                    switch (e && e.keyCode) {
+                        case 8: //backspace
+                            return executeFun(options.back, item);
+                            break;
+                        case 13: //enter 键
+                            return executeFun(options.enter, item);
+                            break;
+                        case 27: //Esc
+                            return executeFun(options.esc, item);
+                            break;
+                        case 33: //pageUp
+                            return executeFun(options.pageUp, item);
+                            break;
+                        case 34: //pageDown
+                            return executeFun(options.pageDown, item);
+                            break;
+                        case 37: //左键
+                            return executeFun(options.left, item);
+                            break;
+                        case 38: //上键
+                            return executeFun(options.up, item);
+                            break;
+                        case 39: //右键
+                            return executeFun(options.right, item);
+                            break;
+                        case 40: //下键
+                            return executeFun(options.down, item);
+                            break;
+                        case 48: //0
+                            return executeFun(options.n0, item);
+                            break;
+                        case 49: //1
+                            return executeFun(options.n1, item);
+                            break;
+                        case 50: //2
+                            return executeFun(options.n2, item);
+                            break;
+                        case 51: //3
+                            return executeFun(options.n3, item);
+                            break;
+                        case 52: //4
+                            return executeFun(options.n4, item);
+                            break;
+                        case 53: //5
+                            return executeFun(options.n5, item);
+                            break;
+                        case 54: //6
+                            return executeFun(options.n6, item);
+                            break;
+                        case 55: //7
+                            return executeFun(options.n7, item);
+                            break;
+                        case 56: //8
+                            return executeFun(options.n8, item);
+                            break;
+                        case 57: //9
+                            return executeFun(options.n9, item);
+                            break;
+                        default:
+                            break;
                     }
-                } else {
-                    if (typeof options.left.center !== "function") {
-                        options.left.center = function (item) {
+                };
+
+                if (options.label) {
+                    $item = $id.find(options.label)
+                }
+
+                $item.focus(function () {
+                    if (typeof options.focus === "function") {
+                        options.focus(this);
+                    }
+                });
+
+                $item.blur(function () {
+                    if (typeof options.blur === "function") {
+                        options.blur(this);
+                    }
+                });
+
+                $item.click(function () {
+                    var flag = true;
+                    if (typeof options.click === "function") {
+                        flag = options.click(this);
+                        if (typeof flag === "undefined")
+                            flag = true;
+                    }
+                    if (typeof options.enter === "function" && flag) {
+                        $(this).attr("tabindex", "-1").focus();
+                        options.enter(this);
+                    }
+                });
+            },
+            /*列表按键监听*/
+            listKeyListener: function (options) {
+                var self = this, id = options.id, $idLi = $('#' + id).find(options.label), length = $idLi.length;
+                index[id] = 0;
+                size[id] = length;
+
+                if (typeof options.left !== "function") {
+                    if (typeof options.left !== "object") {
+                        options.left = function (item) {
                             var idx = $(item).index();
                             $($idLi[--idx]).attr('tabindex', -1).focus();
                         }
-                    }
-                }
-            }
-
-            if (typeof options.up !== "function") {
-                if (typeof options.up !== "object") {
-                    options.up = function (item) {
-                        var idx = $(item).index();
-                        if (idx > options.columnNum - 1) {
-                            idx -= options.columnNum;
-                            $($idLi[idx]).attr('tabindex', -1).focus();
+                    } else {
+                        if (typeof options.left.center !== "function") {
+                            options.left.center = function (item) {
+                                var idx = $(item).index();
+                                $($idLi[--idx]).attr('tabindex', -1).focus();
+                            }
                         }
                     }
-                } else {
-                    if (typeof options.up.center !== "function") {
-                        options.up.center = function (item) {
+                }
+
+                if (typeof options.up !== "function") {
+                    if (typeof options.up !== "object") {
+                        options.up = function (item) {
                             var idx = $(item).index();
                             if (idx > options.columnNum - 1) {
                                 idx -= options.columnNum;
                                 $($idLi[idx]).attr('tabindex', -1).focus();
                             }
                         }
-                    }
-                }
-            }
-
-
-            if (typeof options.right !== "function") {
-                if (typeof options.right !== "object") {
-                    options.right = function (item) {
-                        var idx = $(item).index();
-                        if (idx < length - 1) {
-                            $($idLi[++idx]).attr('tabindex', -1).focus();
+                    } else {
+                        if (typeof options.up.center !== "function") {
+                            options.up.center = function (item) {
+                                var idx = $(item).index();
+                                if (idx > options.columnNum - 1) {
+                                    idx -= options.columnNum;
+                                    $($idLi[idx]).attr('tabindex', -1).focus();
+                                }
+                            }
                         }
                     }
-                } else {
-                    if (typeof options.right.center !== "function") {
-                        options.right.center = function (item) {
+                }
+
+
+                if (typeof options.right !== "function") {
+                    if (typeof options.right !== "object") {
+                        options.right = function (item) {
                             var idx = $(item).index();
                             if (idx < length - 1) {
                                 $($idLi[++idx]).attr('tabindex', -1).focus();
                             }
                         }
-                    }
-                }
-            }
-
-
-            if (typeof options.down !== "function") {
-                if (typeof options.down !== "object") {
-                    options.down = function (item) {
-                        var idx = $(item).index();
-                        if (idx < length - options.columnNum) {
-                            idx += options.columnNum;
-                            $($idLi[idx]).attr('tabindex', -1).focus();
+                    } else {
+                        if (typeof options.right.center !== "function") {
+                            options.right.center = function (item) {
+                                var idx = $(item).index();
+                                if (idx < length - 1) {
+                                    $($idLi[++idx]).attr('tabindex', -1).focus();
+                                }
+                            }
                         }
                     }
-                } else {
-                    if (typeof options.down.center !== "function") {
-                        options.down.center = function (item) {
+                }
+
+
+                if (typeof options.down !== "function") {
+                    if (typeof options.down !== "object") {
+                        options.down = function (item) {
                             var idx = $(item).index();
                             if (idx < length - options.columnNum) {
                                 idx += options.columnNum;
                                 $($idLi[idx]).attr('tabindex', -1).focus();
                             }
                         }
+                    } else {
+                        if (typeof options.down.center !== "function") {
+                            options.down.center = function (item) {
+                                var idx = $(item).index();
+                                if (idx < length - options.columnNum) {
+                                    idx += options.columnNum;
+                                    $($idLi[idx]).attr('tabindex', -1).focus();
+                                }
+                            }
+                        }
                     }
                 }
-            }
 
-            if (typeof options.focus === "function") {
-                var a = options.focus;
-                options.focus = function (item) {
-                    self.index[id] = $(item).index();
-                    a(item);
+                if (typeof options.focus === "function") {
+                    var a = options.focus;
+                    options.focus = function (item) {
+                        index[id] = $(item).index();
+                        a(item);
+                    }
+                } else {
+                    options.focus = function (item) {
+                        index[id] = $(item).index();
+                    }
                 }
-            } else {
-                options.focus = function (item) {
-                    self.index[id] = $(item).index();
-                }
-            }
 
-            self.keyListener(options);
+                this.keyListener(options);
+            }
         }
-    };
-
-    function GHWebSocket() {
-        this.wsUrl = "";
-        this.subscribe = "";
-        this.actions = {};
-        this.client = null;
     }
 
-    GHWebSocket.prototype = {
-        _init: function (_cardId) {
-            this.cardId = _cardId;
-            this._verifyWS();
-        },
-        connect: function () {
-            var self = this, sock = new SockJS(this.wsUrl + this.cardId);
-            this.client = Stomp.over(sock);
-            this.client.debug = function (msg) {
-                //console.debug(msg)
-            };
-            this.client.connect({}, function () {
-                self._subscribe();
-            }, this.onClose(self));
 
-            window.onbeforeunload = function () {
-                self.disconnect();
-            };
-        },
-        disconnect: function () {
-            this.client.disconnect();
-            this.client = null;
-        },
-        _verifyWS: function () {
-            var self = this, key = $("#GHSMLib").attr("key");
+    function GHWebSocket(cardId) {
+        var wsUrl = "", _subscribe = "", actions = {}, client = null;
+        var init = function () {
+            var key = $("#GHSMLib").attr("key");
             if (key) {
-                $.getJSON(selfURL + '/json/application/' + key + '.json', function (data) {
-                    self.wsUrl = data.ws;
-                    self.subscribe = data.subscribe;
-                    if (this.wsUrl != "") {
-                        self.connect();
+                $.getJSON(APIUrl[0] + APIUrl[3].replace("$key", key), function (data) {
+                    wsUrl = data.ws;
+                    _subscribe = data.subscribe;
+                    if (wsUrl != "") {
+                        connect();
                     } else {
                         console.error("错误的ws")
                     }
                 });
             }
-        },
-        _subscribe: function () {
-            var self = this;
-            this.client.subscribe(self.subscribe, function (data) {
+        };
+
+        var connect = function () {
+            var sock = new SockJS(wsUrl + cardId);
+            client = Stomp.over(sock);
+            client.debug = function (msg) {
+                //console.debug(msg)
+            };
+            client.connect({}, function () {
+                subscribe();
+            }, onClose());
+
+            window.onbeforeunload = function () {
+                disconnect();
+            };
+        };
+        var disconnect = function () {
+            client.disconnect();
+            client = null;
+        };
+        var subscribe = function () {
+            client.subscribe(_subscribe, function (data) {
                 //console.log('进入调用:', data);
                 var body = JSON.parse(data.body);
                 var _action = body.action;
                 var _props = body.props;
-                if (self.actions[_action] && typeof self.actions[_action] === "function") {
-                    self.actions[_action](_props, body.openId);
+                if (actions[_action] && typeof actions[_action] === "function") {
+                    actions[_action](_props, body.openId);
                 }
             });
-        },
-        onClose: function (self) {
+        };
+        var onClose = function () {
             //console.debug('WebSocket已退出');
             return function () {
                 setTimeout(function () {
-                    self.connect();
+                    connect();
                 }, 1000);
             };
-        },
-        addActions: function (_actions) {
-            if (typeof _actions === "object") {
-                utils.extend(this.actions, _actions);
-                return true;
-            } else {
-                return false;
+        };
+
+        init();
+
+        return {
+            addActions: function (_actions) {
+                if (typeof _actions === "object") {
+                    utils.extend(actions, _actions);
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
-    };
+    }
+
     function GeHuaShuMeiLib() {
         if (!$) {
             $ = jQuery.noConflict(true);
         }
-        this.cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
-        this._WS = new GHWebSocket();
-        this._init();
+        var version = '1.0.1.201602041104', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
+        //WebSocket
+        var WS = new GHWebSocket(cardId);
 
-        this.utils = utils;
-        this.keyCon = new KeyControl();
-        this.AudioPlayer = AudioPlayer;
-        var ui = new UserInfo(this.cardId);
-        this.getUserInfo = function (fun) {
+        //键盘控制
+        var keyCon = new KeyControl();
+        //音乐播放
+        var AP = AudioPlayer;
+        //用户信息获取
+        var ui = new UserInfo(cardId);
+        var getUserInfo = function (fun) {
             ui.getUserInfo(fun);
         };
+        //用户行为记录
+        var ub = new UserBehavior(cardId);
 
-        var ub = new UserBehavior(this.cardId);
-    }
-
-    GeHuaShuMeiLib.prototype = {
-        version: '1.0.0.201602041104',
-        _init: function () {
-            this._WS._init(this.cardId);
-        },
-        addActions: function (actions) {
-            var r = false;
-            if (typeof actions === "object") {
-                if (this._WS) {
-                    r = this._WS.addActions(actions);
-                }
-            }
-            return r;
+        return {
+            version: version,
+            cardId: cardId,
+            addActions: WS.addActions,
+            keyCon: keyCon,
+            AudioPlayer: AP,
+            getUserInfo: getUserInfo,
+            utils: utils
         }
-    };
+    }
 
     window.GHSMLib = new GeHuaShuMeiLib();
 }(window, document);
