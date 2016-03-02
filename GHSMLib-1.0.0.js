@@ -565,7 +565,7 @@
         _verifyWS: function () {
             var self = this, key = $("#GHSMLib").attr("key");
             if (key) {
-                $.getJSON(selfURL + '/json/application/' + key + '.json', function (data) {
+                $.getJSON(selfURL + '/json/application_1.0.0/' + key + '.json', function (data) {
                     self.wsUrl = data.ws;
                     self.subscribe = data.subscribe;
                     if (this.wsUrl != "") {

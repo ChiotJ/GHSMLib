@@ -1,0 +1,6 @@
+{
+  "id": "f704916f62ea87b11c11ad0bfeadb25f",
+  "name": "电视网络图书馆",
+  "ws": "http://172.16.188.26/tvlibrary/tv/api/ws?tvCode=",
+  "subscribe":"/user/queue/actions"
+}

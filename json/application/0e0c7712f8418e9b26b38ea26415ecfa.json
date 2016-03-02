@@ -1,6 +1,12 @@
 {
   "id": "0e0c7712f8418e9b26b38ea26415ecfa",
   "name": "亲情一刻",
-  "ws": "http://172.16.188.26/chaowai/tv/api/ws?tvCode=",
-  "subscribe": "/user/queue/actions"
+  "ws": [
+    {
+      "url": "http://172.16.188.26/chaowai/tv/api/ws?tvCode=",
+      "subscribe": [
+        "/user/queue/actions"
+      ]
+    }
+  ]
 }

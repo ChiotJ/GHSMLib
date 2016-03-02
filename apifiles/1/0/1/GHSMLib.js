@@ -543,13 +543,13 @@
 
 
     function GHWebSocket(cardId) {
-        var wsUrl = "", _subscribe = "", actions = {}, client = null;
+        var wsUrl = "", _subscribe, actions = {}, client = null;
         var init = function () {
             var key = $("#GHSMLib").attr("key");
             if (key) {
                 $.getJSON(APIUrl[0] + APIUrl[3].replace("$key", key), function (data) {
-                    wsUrl = data.ws;
-                    _subscribe = data.subscribe;
+                    wsUrl = data.ws[0].url;
+                    _subscribe = data.ws[0].subscribe;
                     if (wsUrl != "") {
                         connect();
                     } else {
@@ -578,16 +578,19 @@
             client = null;
         };
         var subscribe = function () {
-            client.subscribe(_subscribe, function (data) {
-                //console.log('进入调用:', data);
-                var body = JSON.parse(data.body);
-                var _action = body.action;
-                var _props = body.props;
-                if (actions[_action] && typeof actions[_action] === "function") {
-                    actions[_action](_props, body.openId);
-                }
-            });
+            for (var k in _subscribe) {
+                client.subscribe(_subscribe[k], function (data) {
+                    //console.log('进入调用:', data);
+                    var body = JSON.parse(data.body);
+                    var _action = body.action;
+                    var _props = body.props;
+                    if (actions[_action] && typeof actions[_action] === "function") {
+                        actions[_action](_props, body.openId);
+                    }
+                });
+            }
         };
+
         var onClose = function () {
             //console.debug('WebSocket已退出');
             return function () {
@@ -615,7 +618,7 @@
         if (!$) {
             $ = jQuery.noConflict(true);
         }
-        var version = '1.0.1.201602041104', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
+        var version = '1.0.1.201603021740', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
         //WebSocket
         var WS = new GHWebSocket(cardId);
 
