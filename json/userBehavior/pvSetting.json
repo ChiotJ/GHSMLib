@@ -24,6 +24,12 @@
         "/web/flytvYun/pages/index/",
         "/web/flytvYun/pages/lifeCircle/"
       ]
+    },
+    {
+      "name": "Family",
+      "regular": [
+        "/web/family/"
+      ]
     }
   ],
   "172.16.188.13": [
