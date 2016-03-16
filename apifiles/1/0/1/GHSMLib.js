@@ -614,11 +614,20 @@
         }
     }
 
+    var backYunPage = function (back) {
+        var url = sessionStorage.getItem("flytvYunFrom");
+        if (url) {
+            window.location.href = url;
+        } else {
+            window.location.href = back;
+        }
+    };
+
     function GeHuaShuMeiLib() {
         if (!$) {
             $ = jQuery.noConflict(true);
         }
-        var version = '1.0.1.201603021740', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
+        var version = '1.0.1.201603161109', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
         //WebSocket
         var WS = new GHWebSocket(cardId);
 
@@ -641,6 +650,7 @@
             keyCon: keyCon,
             AudioPlayer: AP,
             getUserInfo: getUserInfo,
+            backYunPage: backYunPage,
             utils: utils
         }
     }
