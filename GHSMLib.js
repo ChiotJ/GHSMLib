@@ -14,21 +14,46 @@
     }
 
     function getAttribute(name) {
-        return $GHSMLib ? $GHSMLib.attributes[name] ? $GHSMLib.attributes[name].nodeValue : null : null;
+        return $GHSMLib ? $GHSMLib.attributes[name] ? $GHSMLib.attributes[name].nodeValue : "" : "";
     }
 
     var baseURL = $GHSMLib.src.replace("GHSMLib.js", "");
     window.GHSMLib.baseURL = baseURL;
 
     if (!window.jQuery || (window.jQuery && window.jQuery().jquery.substring(0, 3) < 1.9)) {
-        getScript(baseURL + "lib/jquery-2.1.3.min.js", "jQuery");
+        getScript(baseURL + "lib/jquery-2.1.3.min.js");
     } else {
         window.GHSMLib.JQuery = window.jQuery;
     }
 
+    var getWebSocket = false;
+    window.GHSMLib.getJQuery = false;
+
+    var $lib = getAttribute("lib").trim().toLowerCase();
+    if ($lib) {
+        if ($lib.substr($lib.length - 1, 1) !== ",") {
+            $lib += ",";
+        }
+        var libs = $lib.split(",");
+        for (var l in libs) {
+            switch (libs[l]) {
+                case "jquery":
+                    window.GHSMLib.getJQuery = true;
+                    break;
+                case "websocket":
+                    getWebSocket = true;
+                    break;
+                case "txmap":
+                    getScript(baseURL + "lib/TXmap/api.js");
+                    getScript(baseURL + "lib/TXmap/main_2.3.14.js");
+                    break;
+            }
+        }
+    }
+
     var key = getAttribute("key");
 
-    if (key) {
+    if (key || getWebSocket) {
         getScript(baseURL + "lib/sockjs-1.0.0.min.js");
         getScript(baseURL + "lib/stomp.min.js");
     }

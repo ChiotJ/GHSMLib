@@ -4,7 +4,7 @@
  */
 !function (window, document) {
     'use strict';
-    var $ = window.GHSMLib.JQuery, selfURL = window.GHSMLib.baseURL, APIUrl = window.GHSMLib.APIUrl;
+    var $ = window.GHSMLib.JQuery, selfURL = window.GHSMLib.baseURL, APIUrl = window.GHSMLib.APIUrl, getJQuery = window.GHSMLib.getJQuery;
 
     var utils = (function () {
         var me = {};
@@ -625,9 +625,13 @@
 
     function GeHuaShuMeiLib() {
         if (!$) {
-            $ = jQuery.noConflict(true);
+            if (getJQuery) {
+                $ = window.jQuery;
+            } else {
+                $ = jQuery.noConflict(true);
+            }
         }
-        var version = '1.0.1.201603161109', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
+        var version = '1.0.1.201603222123', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
         //WebSocket
         var WS = new GHWebSocket(cardId);
 
