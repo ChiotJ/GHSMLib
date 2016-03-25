@@ -1,5 +1,5 @@
 #歌华数媒电视应用库#
-	version:1.0.0
+	version:1.0.1
 
 ##方法目录##
 - [联动参数调用方法](#联动参数调用方法)
@@ -12,7 +12,7 @@
 ##引用
 
 ```html
-<script id="GHSMLib" src="http://172.16.188.26/web/GHSMLib/GHSMLib-1.0.0.min.js" key="" type="text/javascript"></script>
+<script id="GHSMLib" src="http://172.16.188.26/web/GHSMLib/GHSMLib.js" key="" type="text/javascript"></script>
 ```
 
 ##联动参数调用方法
@@ -54,7 +54,7 @@
     ```    
     `text`二维码扫出内容
         
-    `callbackfunction`二维码大小
+    `size`二维码大小
     
     返回值为二维码图像地址
 

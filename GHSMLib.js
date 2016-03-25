@@ -64,8 +64,14 @@
         'http://172.16.188.26/chaowai/',
         'application/$key.json',
         'map/polygon/$street.json'
-
     ];
+
+    if (!window.GHSMLibOnLoad) {
+        window.GHSMLibOnLoad = function () {
+            console.log("GHSMLib  is loaded successfully")
+        };
+    }
+
 
     getScript(baseURL + "apifiles/1/0/1/GHSMLib.min.js");
 })();

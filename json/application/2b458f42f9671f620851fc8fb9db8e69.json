@@ -3,8 +3,9 @@
   "name": "平安大兴",
   "ws": [
     {
-      "url": "",
+      "url": "http://10.191.255.121:8080/safe_dx/tv/api/ws?tvCode=",
       "subscribe": [
+        "/user/queue/actions"
       ]
     }
   ]

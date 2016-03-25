@@ -4,7 +4,10 @@
  */
 !function (window, document) {
     'use strict';
-    var $ = window.GHSMLib.JQuery, selfURL = window.GHSMLib.baseURL, APIUrl = window.GHSMLib.APIUrl, getJQuery = window.GHSMLib.getJQuery;
+    var $ = window.GHSMLib.JQuery,
+        selfURL = window.GHSMLib.baseURL,
+        APIUrl = window.GHSMLib.APIUrl,
+        getJQuery = window.GHSMLib.getJQuery;
 
     var utils = (function () {
         var me = {};
@@ -631,7 +634,7 @@
                 $ = jQuery.noConflict(true);
             }
         }
-        var version = '1.0.1.201603222123', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
+        var version = '1.0.1.201603251040', cardId = typeof CyberCloud != "undefined" ? CyberCloud.GetParam("CardID").ParamValue ? CyberCloud.GetParam("CardID").ParamValue : CyberCloud.GetParam("UserCode").ParamValue ? CyberCloud.GetParam("UserCode").ParamValue.replace("CA", "") : "" : "";
         //WebSocket
         var WS = new GHWebSocket(cardId);
 
@@ -660,4 +663,8 @@
     }
 
     window.GHSMLib = new GeHuaShuMeiLib();
+
+    if (typeof GHSMLibOnLoad === "function") {
+        GHSMLibOnLoad();
+    }
 }(window, document);
