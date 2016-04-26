@@ -1,0 +1,13 @@
+{
+  "id": "3c1edd6a422e871cffff32432ce1cad1",
+  "name": "歌华生活圈-测试",
+  "ws": [
+    {
+      "url": "http://58.30.224.22/wx/tv/api/ws?tvCode=",
+      "subscribe": [
+        "/user/queue/actions",
+        "/topic/actions"
+      ]
+    }
+  ]
+}

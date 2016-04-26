@@ -320,8 +320,6 @@
     }
 
     function KeyControl() {
-        var index = {}, size = {};
-
         var executeFun = function (fun, item) {
             var order = ["before", "center", "after"];
             var flag = true;
@@ -342,6 +340,8 @@
         };
 
         return {
+            index: {},
+            size:{},
             /*普通按键监听*/
             keyListener: function (options) {
                 var id = options.id, $id = $('#' + id), $item = $id;
@@ -442,8 +442,8 @@
             /*列表按键监听*/
             listKeyListener: function (options) {
                 var self = this, id = options.id, $idLi = $('#' + id).find(options.label), length = $idLi.length;
-                index[id] = 0;
-                size[id] = length;
+                this.index[id] = 0;
+                this.size[id] = length;
 
                 if (typeof options.left !== "function") {
                     if (typeof options.left !== "object") {
@@ -530,12 +530,12 @@
                 if (typeof options.focus === "function") {
                     var a = options.focus;
                     options.focus = function (item) {
-                        index[id] = $(item).index();
+                        self.index[id] = $(item).index();
                         a(item);
                     }
                 } else {
                     options.focus = function (item) {
-                        index[id] = $(item).index();
+                        self.index[id] = $(item).index();
                     }
                 }
 
