@@ -309,6 +309,7 @@
 
         init();
         return {
+            play: play,
             next: next,
             pre: pre,
             pause: pause,
@@ -341,7 +342,7 @@
 
         return {
             index: {},
-            size:{},
+            size: {},
             /*普通按键监听*/
             keyListener: function (options) {
                 var id = options.id, $id = $('#' + id), $item = $id;
