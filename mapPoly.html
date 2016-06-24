@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>获取多边形区域覆盖的范围</title>
+    <style type="text/css">
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body, button, input, select, textarea {
+            font: 12px/16px Verdana, Helvetica, Arial, sans-serif;
+        }
+
+        #info {
+            margin-top: 10px;
+        }
+
+        #container {
+            min-width: 600px;
+            min-height: 767px;
+        }
+    </style>
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+    <script id="GHSMLib" src="GHSMLib.js" type="application/javascript" lib="jQuery"></script>
+    <script>
+        var init = function () {
+            var center = new qq.maps.LatLng(39.913736, 116.198852);
+            var map = new qq.maps.Map(document.getElementById('container'), {
+                center: center,
+                zoom: 13
+            });
+            $.getJSON('json/map/polygon/bajiao.json', function (data) {
+
+                var bounds;
+                for (var j in data.communitys) {
+                    var polys = data.communitys[j].poly;
+                    var path = [];
+
+                    for (var i in polys) {
+                        var p = polys[i];
+                        var a = new qq.maps.InfoWindow({
+                            position: new qq.maps.LatLng(p.lat, p.lng),
+                            map: map,
+                            content: data.communitys[j].id1 + ":" + i + "," + p.lat + "," + p.lng
+                        });
+                        a.open();
+                        path.push(new qq.maps.LatLng(p.lat, p.lng));
+                    }
+                    //添加折线覆盖物
+                    var polygon = new qq.maps.Polygon({
+                        path: path,
+                        strokeColor: '#33ca3e',
+                        strokeWeight: 4,
+                        /*fillColor: '#446acc',*/
+                        map: map
+                    });
+                    bounds = polygon.getBounds();
+                }
+
+
+                //添加定时器
+                setTimeout(function () {
+                    map.fitBounds(bounds);
+                }, 1000);
+            });
+
+
+           /* $.getJSON('json/map/polygon/street.json', function (data) {
+
+                var bounds;
+                var polys = data[0].poly;
+                var path = [];
+
+                for (var i in polys) {
+                    var p = polys[i];
+                    var a = new qq.maps.InfoWindow({
+                        position: new qq.maps.LatLng(p.lat, p.lng),
+                        map: map,
+                        content: p.lat + "," + p.lng
+                    });
+                    a.open();
+                    path.push(new qq.maps.LatLng(p.lat, p.lng));
+                }
+                //添加折线覆盖物
+                var polygon = new qq.maps.Polygon({
+                    path: path,
+                    strokeColor: '#33ca3e',
+                    strokeWeight: 4,
+                    /!*fillColor: '#446acc',*!/
+                    map: map
+                });
+                bounds = polygon.getBounds();
+
+
+                //添加定时器
+                setTimeout(function () {
+                    map.fitBounds(bounds);
+                }, 1000);
+            });*/
+
+        }
+    </script>
+</head>
+<body onload="init()">
+<div id="container"></div>
+<div id="info">
+    <p>获取多边形区域覆盖的地理范围，3秒后使地图适应这一范围。</p>
+</div>
+</body>
+</html>
