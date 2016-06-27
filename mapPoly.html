@@ -47,7 +47,7 @@
                             map: map,
                             content: data.communitys[j].id1 + ":" + i + "," + p.lat + "," + p.lng
                         });
-                        a.open();
+                        //a.open();
                         path.push(new qq.maps.LatLng(p.lat, p.lng));
                     }
                     //添加折线覆盖物
@@ -69,38 +69,44 @@
             });
 
 
-           /* $.getJSON('json/map/polygon/street.json', function (data) {
+            /* $.getJSON('json/map/polygon/street.json', function (data) {
 
-                var bounds;
-                var polys = data[0].poly;
-                var path = [];
+             var bounds;
+             var polys = data[1].poly;
+             var path = [];
 
-                for (var i in polys) {
-                    var p = polys[i];
-                    var a = new qq.maps.InfoWindow({
-                        position: new qq.maps.LatLng(p.lat, p.lng),
-                        map: map,
-                        content: p.lat + "," + p.lng
-                    });
-                    a.open();
-                    path.push(new qq.maps.LatLng(p.lat, p.lng));
-                }
-                //添加折线覆盖物
-                var polygon = new qq.maps.Polygon({
-                    path: path,
-                    strokeColor: '#33ca3e',
-                    strokeWeight: 4,
-                    /!*fillColor: '#446acc',*!/
-                    map: map
-                });
-                bounds = polygon.getBounds();
+             for (var i in polys) {
+             var p = polys[i];
+             var a = new qq.maps.InfoWindow({
+             position: new qq.maps.LatLng(p.lat, p.lng),
+             map: map,
+             content: p.lat + "," + p.lng
+             });
+             //a.open();
+             path.push(new qq.maps.LatLng(p.lat, p.lng));
+             }
+             //添加折线覆盖物
+             var polygon = new qq.maps.Polygon({
+             path: path,
+             strokeColor: '#33ca3e',
+             strokeWeight: 4,
+             /!*fillColor: '#446acc',*!/
+             map: map
+             });
+             bounds = polygon.getBounds();
 
 
-                //添加定时器
-                setTimeout(function () {
-                    map.fitBounds(bounds);
-                }, 1000);
-            });*/
+             //添加定时器
+             setTimeout(function () {
+             map.fitBounds(bounds);
+             }, 1000);
+             });*/
+
+
+            var marker = new qq.maps.Marker({
+                position: new qq.maps.LatLng("39.91549", "116.20222"),
+                map: map
+            });
 
         }
     </script>

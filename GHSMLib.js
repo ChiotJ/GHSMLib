@@ -73,5 +73,5 @@
     }
 
 
-    getScript(baseURL + "apifiles/1/0/1/GHSMLib.min.js");
+    getScript(baseURL + "apifiles/1/0/2/GHSMLib.min.js");
 })();
